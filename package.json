@@ -1,0 +1,48 @@
+{
+  "name": "wci-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "SERWIST_SUPPRESS_TURBOPACK_WARNING=1 next build --webpack",
+    "start": "next start",
+    "generate:icons": "node scripts/generate-icons.mjs",
+    "generate:flags": "node scripts/extract-flags.mjs",
+    "v0:build": "tsx scripts/build-dashboard.ts"
+  },
+  "dependencies": {
+    "@rainbow-me/rainbowkit": "^2.2.10",
+    "@serwist/next": "^9.5.7",
+    "@supabase/supabase-js": "^2.104.0",
+    "@tanstack/react-query": "^5.99.2",
+    "@tanstack/react-query-devtools": "^5.99.2",
+    "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^1.8.0",
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-hook-form": "^7.72.1",
+    "recharts": "^3.8.1",
+    "serwist": "^9.5.7",
+    "v0-sdk": "^0.16.4",
+    "vaul": "^1.1.2",
+    "viem": "^2.48.1",
+    "wagmi": "^2.19.5",
+    "zod": "^4.3.6",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "dotenv": "^17.4.2",
+    "js-yaml": "^4.1.1",
+    "sharp": "^0.34.5",
+    "tailwindcss": "^4",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>WCI Dash — Betting Dashboard</title>
+<link rel="icon" href="assets/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+
+<!-- ext-resource-dependency: declare external asset deps for the bundler -->
+<meta name="ext-resource-dependency" content="styles.css" />
+<meta name="ext-resource-dependency" content="data.jsx" />
+<meta name="ext-resource-dependency" content="flags.jsx" />
+<meta name="ext-resource-dependency" content="paul.jsx" />
+<meta name="ext-resource-dependency" content="components.jsx" />
+<meta name="ext-resource-dependency" content="layout.jsx" />
+<meta name="ext-resource-dependency" content="panels.jsx" />
+<meta name="ext-resource-dependency" content="dashboard.jsx" />
+<meta name="ext-resource-dependency" content="betslip.jsx" />
+<meta name="ext-resource-dependency" content="toasts.jsx" />
+<meta name="ext-resource-dependency" content="assets/logo.png" />
+<meta name="ext-resource-dependency" content="assets/pattern.jpg" />
+<meta name="ext-resource-dependency" content="assets/chibi_jumping.png" />
+<meta name="ext-resource-dependency" content="assets/chibi_tarot.png" />
+<meta name="ext-resource-dependency" content="assets/chibi_galaxy.png" />
+<meta name="ext-resource-dependency" content="assets/chibi_cheerful.png" />
+<meta name="ext-resource-dependency" content="assets/chibi_oracle.png" />
+</head>
+<body>
+
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a1040"/>
+      <stop offset="0.5" stop-color="#2a1540"/>
+      <stop offset="1" stop-color="#070B1A"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#F2B705" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#F2B705" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <circle cx="200" cy="200" r="140" fill="url(#glow)"/>
+  <!-- octopus body -->
+  <ellipse cx="200" cy="180" rx="72" ry="68" fill="#8B4DC9"/>
+  <!-- tentacles -->
+  <g stroke="#6B2FA8" stroke-width="16" stroke-linecap="round" fill="none">
+    <path d="M 150 220 Q 130 260 140 300"/>
+    <path d="M 180 240 Q 170 280 190 310"/>
+    <path d="M 220 240 Q 230 280 210 310"/>
+    <path d="M 250 220 Q 270 260 260 300"/>
+    <path d="M 135 200 Q 100 210 95 245"/>
+    <path d="M 265 200 Q 300 210 305 245"/>
+  </g>
+  <!-- eyes -->
+  <circle cx="178" cy="175" r="10" fill="#fff"/>
+  <circle cx="222" cy="175" r="10" fill="#fff"/>
+  <circle cx="180" cy="177" r="5" fill="#0A0E1F"/>
+  <circle cx="224" cy="177" r="5" fill="#0A0E1F"/>
+  <!-- cheeks -->
+  <circle cx="165" cy="195" r="7" fill="#FF8AAE" opacity="0.7"/>
+  <circle cx="235" cy="195" r="7" fill="#FF8AAE" opacity="0.7"/>
+  <!-- soccer ball -->
+  <circle cx="200" cy="110" r="22" fill="#fff" stroke="#000" stroke-width="2"/>
+  <polygon points="200,98 210,106 206,118 194,118 190,106" fill="#000"/>
+  <!-- wordmark -->
+  <text x="200" y="355" font-family="system-ui, sans-serif" font-weight="700" font-size="28" fill="#F2B705" text-anchor="middle" letter-spacing="2">WCI DASH</text>
+</svg>
+</template>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="data.jsx"></script>
+<script type="text/babel" src="flags.jsx"></script>
+<script type="text/babel" src="paul.jsx"></script>
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="layout.jsx"></script>
+<script type="text/babel" src="panels.jsx"></script>
+<script type="text/babel" src="dashboard.jsx"></script>
+<script type="text/babel" src="betslip.jsx"></script>
+<script type="text/babel" src="toasts.jsx"></script>
+
+<script type="text/babel">
+/* global React, ReactDOM */
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "patternOpacity": 0,
+  "rainbowIntensity": 2,
+  "paulTreatment": "studio",
+  "simState": "active"
+}/*EDITMODE-END*/;
+
+const STATES = {
+  active: {
+    wci: 312000, usdc: 2450, pnl: 127.45, claimable: 42.18,
+    activeBets: [
+      { teams: ['USA','MEX'], outcome: 'USA', stake: 50, potential: 92.37 },
+      { teams: ['ENG','FRA'], outcome: 'FRA', stake: 125, potential: 215.50 },
+      { teams: ['JPN','GER'], outcome: 'DRAW', stake: 80, potential: 276.40 },
+    ],
+  },
+  empty: {
+    wci: 0, usdc: 500, pnl: 0, claimable: 0, activeBets: [],
+  },
+  bigwin: {
+    wci: 312000, usdc: 2450 + 92.37, pnl: 219.82, claimable: 92.37,
+    activeBets: [
+      { teams: ['ENG','FRA'], outcome: 'FRA', stake: 125, potential: 215.50 },
+    ],
+  },
+  loss: {
+    wci: 312000, usdc: 2400, pnl: -48.5, claimable: 0,
+    activeBets: [
+      { teams: ['JPN','GER'], outcome: 'DRAW', stake: 80, potential: 276.40 },
+    ],
+  },
+};
+
+const App = () => {
+  const [tweaks, setTweaks] = React.useState(() => {
+    try {
+      const saved = localStorage.getItem('wci-tweaks');
+      return saved ? { ...TWEAK_DEFAULTS, ...JSON.parse(saved) } : TWEAK_DEFAULTS;
+    } catch { return TWEAK_DEFAULTS; }
+  });
+  const [editMode, setEditMode] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState('Dashboard');
+  const [pick, setPick] = React.useState(null);
+  const [expanded, setExpanded] = React.useState(null);
+  const [toast, setToast] = React.useState(null);
+  const [page, setPage] = React.useState(() => localStorage.getItem('wci-page') || 'dashboard');
+
+  const state = STATES[tweaks.simState] || STATES.active;
+
+  // Apply tweaks to CSS vars
+  React.useEffect(() => {
+    document.documentElement.style.setProperty('--pattern-opacity', tweaks.patternOpacity / 100);
+    document.documentElement.style.setProperty('--rainbow', tweaks.rainbowIntensity);
+    localStorage.setItem('wci-tweaks', JSON.stringify(tweaks));
+  }, [tweaks]);
+
+  React.useEffect(() => { localStorage.setItem('wci-page', page); }, [page]);
+
+  // Edit-mode protocol
+  React.useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === '__activate_edit_mode') setEditMode(true);
+      if (e.data?.type === '__deactivate_edit_mode') setEditMode(false);
+    };
+    window.addEventListener('message', handler);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
+  const updateTweak = (k, v) => {
+    setTweaks(t => {
+      const next = { ...t, [k]: v };
+      window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [k]: v } }, '*');
+      return next;
+    });
+  };
+
+  const handlePlaceBet = (picked) => {
+    setPick(picked);
+  };
+
+  const handleBetPlaced = () => {
+    setPick(null);
+    setToast({ kind: 'placed', message: 'Locked in. Paul has the slip.' });
+    setTimeout(() => setToast(null), 2800);
+  };
+
+  const handleClaim = () => {
+    setToast({ kind: 'win', amount: state.claimable });
+    setTimeout(() => setToast(null), 4500);
+  };
+
+  return (
+    <div style={{ height: '100vh', position: 'relative', overflow: 'hidden' }}>
+      <div className="bg-fifa" />
+      <div className="bg-arcs" />
+      <div className="bg-grain" />
+      <div style={{ position: 'relative', zIndex: 1, height: '100%' }}>
+        {page === 'dashboard' ? (
+          <Dashboard
+            state={state} activeTab={activeTab} setActiveTab={setActiveTab}
+            onPickOutcome={handlePlaceBet} expanded={expanded} setExpanded={setExpanded}
+            onClaim={handleClaim} onShowToast={(t) => setToast(t)}
+            paulTreatment={tweaks.paulTreatment}
+          />
+        ) : (
+          <StatesGallery onBack={() => setPage('dashboard')} />
+        )}
+      </div>
+
+      {/* View switch */}
+      <div style={{ position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 70, display: 'flex', gap: 6, padding: 6, background: 'rgba(10,14,31,0.85)', border: '1px solid var(--hair-strong)', borderRadius: 12, backdropFilter: 'blur(12px)', boxShadow: '0 8px 24px rgba(0,0,0,0.6)' }}>
+        {[['dashboard','Dashboard'],['gallery','States Gallery']].map(([k,l]) => (
+          <button key={k} onClick={() => setPage(k)}
+                  style={{
+                    padding: '8px 14px', borderRadius: 8,
+                    background: page === k ? 'var(--bg-elevated)' : 'transparent',
+                    border: 'none', color: page === k ? 'var(--t1)' : 'var(--t3)',
+                    fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                  }}>{l}</button>
+        ))}
+      </div>
+
+      {/* BetSlip */}
+      <BetSlip open={!!pick} pick={pick} state={state}
+               onClose={() => setPick(null)} onPlaced={handleBetPlaced} />
+
+      {/* Peek Tentacle — only on Dashboard tab & when slip closed */}
+      {page === 'dashboard' && !pick && (
+        <PeekTentacle onOpen={() => setPick({
+          teams: ['USA', 'TUR'],
+          outcome: 'USA',
+          odds: 1.85,
+          venue: 'SoFi · Inglewood',
+          matchTime: 'Tonight · 20:00 PT',
+          group: 'D',
+          paulPick: true,
+        })} active={!!pick} />
+      )}
+
+      {/* Toasts */}
+      {toast?.kind === 'win' && <WinToast amount={toast.amount} onClose={() => setToast(null)} />}
+      {toast?.kind === 'loss' && <LossToast onClose={() => setToast(null)} onMint={() => setToast(null)} />}
+      {toast?.kind === 'empty' && <EmptyState onClose={() => setToast(null)} />}
+      {toast?.kind === 'contrarian' && <ContrarianToast onClose={() => setToast(null)} />}
+      {toast?.kind === 'placed' && (
+        <div style={{
+          position: 'fixed', top: 100, right: 32, zIndex: 60,
+          padding: '14px 20px', display: 'flex', gap: 12, alignItems: 'center',
+          background: 'linear-gradient(180deg, #1a2040, #0F1730)',
+          border: '1.5px solid var(--gold)',
+          borderRadius: 14,
+          boxShadow: '0 20px 60px -12px rgba(0,0,0,0.8), 0 0 48px -12px var(--gold)',
+          animation: 'toast-in 320ms var(--ease)',
+        }}>
+          <span style={{ fontSize: 22 }}>🐙</span>
+          <div>
+            <div className="display" style={{ fontSize: 15, color: 'var(--gold)' }}>LOCKED IN.</div>
+            <div style={{ fontSize: 12, color: 'var(--t2)' }}>{toast.message}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Tweaks panel */}
+      {editMode && (
+        <TweaksPanel tweaks={tweaks} updateTweak={updateTweak} setToast={setToast} />
+      )}
+    </div>
+  );
+};
+
+const Dashboard = ({ state, activeTab, setActiveTab, onPickOutcome, expanded, setExpanded, onClaim, onShowToast, paulTreatment }) => {
+  const profile = { ...PROFILE, wci: state.wci, usdc: state.usdc, claimable: state.claimable };
+  return (
+    <div data-screen-label="01 Dashboard" style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <TopHeader activeTab={activeTab} onTab={setActiveTab}
+                 claimable={state.claimable} onClaim={onClaim} />
+      <div style={{ flex: 1, display: 'flex', maxWidth: 1560, margin: '0 auto', width: '100%', minHeight: 0 }}>
+        <LeftSidebar profile={profile} activeTab={activeTab} onTab={setActiveTab} />
+
+        <main style={{ flex: 1, padding: '18px 22px 80px', minWidth: 0, overflowY: 'auto', overflowX: 'hidden' }} className="main-scroll">
+          {/* Hero */}
+          <div style={{ display: 'grid', gridTemplateColumns: '420px 1fr', gap: 14, marginBottom: 14 }}>
+            <PaulHeroCard treatment={paulTreatment} />
+            <NextMatchCard onPickOutcome={onPickOutcome} />
+          </div>
+
+          {/* Stats */}
+          <div style={{ marginBottom: 14 }}>
+            <StatsStrip state={state} />
+          </div>
+
+          {/* Main 3-col */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px 300px', gap: 12, marginBottom: 14 }}>
+            <MatchesList onPickOutcome={onPickOutcome} expanded={expanded} setExpanded={setExpanded} />
+            <PaulsScoreboard />
+            <RightRail state={state} onClaim={onClaim} />
+          </div>
+
+          {/* Footer */}
+          <TentacleFooter />
+
+          {/* Toast test strip */}
+          <div style={{ marginTop: 16, padding: 14, borderRadius: 12, border: '1px dashed var(--hair-strong)', display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <span className="label" style={{ marginRight: 8 }}>Trigger toast states:</span>
+            {[
+              ['win', 'Win (GOAL)', 'var(--lime)'],
+              ['loss', 'Loss (Cope Card)', 'var(--coral)'],
+              ['contrarian', 'Contrarian Alert', 'var(--fifa-purple)'],
+              ['empty', 'Empty State', 'var(--fifa-teal)'],
+            ].map(([k, l, c]) => (
+              <button key={k} onClick={() => onShowToast({ kind: k, amount: 92.37 })}
+                      style={{
+                        padding: '6px 12px', borderRadius: 8,
+                        background: 'rgba(255,255,255,0.04)',
+                        border: `1px solid ${c}`,
+                        color: c, cursor: 'pointer', fontSize: 11, fontWeight: 600,
+                      }}>{l}</button>
+            ))}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+const TweaksPanel = ({ tweaks, updateTweak, setToast }) => (
+  <div style={{
+    position: 'fixed', bottom: 20, right: 20, zIndex: 70,
+    width: 300, padding: 18,
+    background: 'rgba(10,14,31,0.9)', backdropFilter: 'blur(16px)',
+    border: '1px solid var(--hair-strong)', borderRadius: 16,
+    boxShadow: '0 20px 60px -12px rgba(0,0,0,0.8)',
+  }}>
+    <div className="display" style={{ fontSize: 14, marginBottom: 14 }}>Tweaks</div>
+
+    <div style={{ marginBottom: 14 }}>
+      <div className="label" style={{ marginBottom: 6 }}>Background pattern · {tweaks.patternOpacity}%</div>
+      <input type="range" min="0" max="30" value={tweaks.patternOpacity}
+             onChange={e => updateTweak('patternOpacity', parseInt(e.target.value))}
+             style={{ width: '100%' }} />
+    </div>
+
+    <div style={{ marginBottom: 14 }}>
+      <div className="label" style={{ marginBottom: 6 }}>Rainbow glow · {tweaks.rainbowIntensity.toFixed(1)}×</div>
+      <input type="range" min="0" max="2" step="0.1" value={tweaks.rainbowIntensity}
+             onChange={e => updateTweak('rainbowIntensity', parseFloat(e.target.value))}
+             style={{ width: '100%' }} />
+    </div>
+
+    <div style={{ marginBottom: 14 }}>
+      <div className="label" style={{ marginBottom: 6 }}>Paul treatment</div>
+      <div style={{ display: 'flex', gap: 4 }}>
+        {[['studio','2.5D'], ['chibi','Chibi'], ['line','Line']].map(([k,l]) => (
+          <button key={k} onClick={() => updateTweak('paulTreatment', k)}
+                  style={{
+                    flex: 1, padding: '6px 0', borderRadius: 8,
+                    border: '1px solid ' + (tweaks.paulTreatment === k ? 'var(--gold)' : 'var(--hair)'),
+                    background: tweaks.paulTreatment === k ? 'rgba(242,183,5,0.1)' : 'transparent',
+                    color: tweaks.paulTreatment === k ? 'var(--gold)' : 'var(--t2)',
+                    cursor: 'pointer', fontSize: 11, fontWeight: 600,
+                  }}>{l}</button>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <div className="label" style={{ marginBottom: 6 }}>Simulated state</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 4 }}>
+        {[['active','Active'], ['empty','Empty'], ['bigwin','Big Win'], ['loss','Loss']].map(([k,l]) => (
+          <button key={k} onClick={() => updateTweak('simState', k)}
+                  style={{
+                    padding: '6px 8px', borderRadius: 8,
+                    border: '1px solid ' + (tweaks.simState === k ? 'var(--fifa-purple)' : 'var(--hair)'),
+                    background: tweaks.simState === k ? 'rgba(122,63,191,0.15)' : 'transparent',
+                    color: tweaks.simState === k ? 'var(--fifa-purple)' : 'var(--t2)',
+                    cursor: 'pointer', fontSize: 11, fontWeight: 600,
+                  }}>{l}</button>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+// States gallery — all modes + toasts side-by-side
+const StatesGallery = () => {
+  const frames = [
+    { title: 'Win Toast', sub: 'Lime glow · confetti · wiggle', el: <WinToast amount={92.37} onClose={() => {}} /> },
+    { title: 'Loss Toast + Cope Card', sub: 'Coral border · mint CTA', el: <LossToast onClose={() => {}} onMint={() => {}} /> },
+    { title: 'Contrarian Alert', sub: 'Paul sees something different', el: <ContrarianToast onClose={() => {}} /> },
+    { title: 'Empty State', sub: 'No bets yet · bouncing ball', el: <EmptyState onClose={() => {}} /> },
+  ];
+  return (
+    <div className="main-scroll" style={{ height: '100vh', overflowY: 'auto' }} data-screen-label="02 States Gallery">
+      <div style={{ padding: '40px', maxWidth: 1440, margin: '0 auto' }}>
+      <div className="display" style={{ fontSize: 40, letterSpacing: '-0.03em' }}>States Gallery</div>
+      <div style={{ color: 'var(--t2)', marginBottom: 40, maxWidth: 640 }}>
+        The four character-moment toasts are first-class citizens. Each sits inside its own framed artboard below so you can review them without the rest of the UI in the way.
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
+        {frames.map((f, i) => (
+          <div key={i} style={{
+            position: 'relative', height: 420, borderRadius: 20,
+            background: 'linear-gradient(180deg, #0F1730, #070B1A)',
+            border: '1px solid var(--hair-strong)', overflow: 'hidden',
+          }}>
+            <div className="bg-pattern" style={{ position: 'absolute', opacity: 0.08 }} />
+            <div style={{ position: 'absolute', top: 14, left: 18, zIndex: 2 }}>
+              <div className="label">{`0${i+1}`}</div>
+              <div className="display" style={{ fontSize: 18 }}>{f.title}</div>
+              <div style={{ fontSize: 11, color: 'var(--t3)' }}>{f.sub}</div>
+            </div>
+            {/* Render frame inline */}
+            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+              <div style={{ position: 'absolute', top: 60, right: 20, pointerEvents: 'auto' }}>
+                <InlineFrame which={f.title} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Type & color swatches */}
+      <div className="display" style={{ fontSize: 28, marginTop: 56, marginBottom: 20, letterSpacing: '-0.02em' }}>Design System</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+        <div className="card" style={{ '--card-accent': 'var(--fifa-teal)', padding: 24 }}>
+          <h3 className="card-title">FIFA26 Palette (muted)</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginTop: 14 }}>
+            {['red','orange','yellow','lime','teal','blue','purple','magenta'].map(k => (
+              <div key={k} style={{
+                height: 64, borderRadius: 10,
+                background: `var(--fifa-${k})`,
+                display: 'flex', alignItems: 'flex-end', padding: 8,
+                color: '#0A0E1F', fontSize: 10, fontWeight: 600,
+                textTransform: 'uppercase', letterSpacing: '0.06em',
+              }}>{k}</div>
+            ))}
+          </div>
+        </div>
+        <div className="card" style={{ '--card-accent': 'var(--fifa-orange)', padding: 24 }}>
+          <h3 className="card-title">Typography</h3>
+          <div style={{ marginTop: 14 }}>
+            <div className="display" style={{ fontSize: 40, letterSpacing: '-0.03em', lineHeight: 1 }}>Bricolage Grotesque</div>
+            <div style={{ fontSize: 12, color: 'var(--t3)', marginTop: 4 }}>Display · numerals · section titles</div>
+            <div style={{ fontSize: 18, marginTop: 16 }}>Inter — body & UI copy</div>
+            <div className="mono" style={{ fontSize: 16, marginTop: 12, color: 'var(--gold)' }}>JetBrains Mono — 2.14× · $127.45 · T−02:14:33</div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  );
+};
+
+// Renders the actual toast components inside gallery frames, scoped via absolute positioning hack
+const InlineFrame = ({ which }) => {
+  // Replicate the visual of each toast but statically contained in the frame
+  if (which === 'Win Toast') {
+    return (
+      <div style={{ position: 'relative', width: 380, padding: 20,
+        background: 'linear-gradient(180deg, #1a2845, #0F1730)',
+        border: '1.5px solid var(--lime)', borderRadius: 16,
+        boxShadow: '0 20px 60px -12px rgba(0,0,0,0.8), 0 0 48px -8px var(--lime)',
+        display: 'flex', gap: 14, alignItems: 'center' }}>
+        <div style={{ width: 88, height: 88 }}>
+          <img src="assets/chibi_jumping.png" width="88" height="88" />
+        </div>
+        <div>
+          <div className="display" style={{ fontSize: 22, color: 'var(--lime)' }}>GOAAAAL.</div>
+          <div style={{ fontSize: 13, color: 'var(--t2)', marginTop: 4 }}>
+            <span className="mono" style={{ color: 'var(--lime)', fontWeight: 700 }}>+$92.37</span> claimable
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--t3)' }}>USA beat Mexico 2–1</div>
+        </div>
+      </div>
+    );
+  }
+  if (which === 'Loss Toast + Cope Card') {
+    return (
+      <div style={{ width: 380, padding: 20,
+        background: 'linear-gradient(180deg, #2a1525, #1a0820)',
+        border: '1.5px solid var(--coral)', borderRadius: 16,
+        boxShadow: '0 20px 60px -12px rgba(0,0,0,0.8), 0 0 48px -8px var(--coral)' }}>
+        <div style={{ display: 'flex', gap: 14 }}>
+          <img src="assets/chibi_tarot.png" width="88" height="88" />
+          <div>
+            <div className="display" style={{ fontSize: 20, color: 'var(--coral)' }}>Tough break.</div>
+            <div style={{ fontSize: 13, color: 'var(--t2)', marginTop: 4 }}>Paul minted you a <span style={{ color: 'var(--fifa-purple)' }}>Cope Card</span>.</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+          <button className="btn-3d" style={{ flex: 1, padding: '10px', fontSize: 12 }}>Mint NFT</button>
+          <button style={{ padding: '10px 14px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--hair)', color: 'var(--t2)', fontSize: 12 }}>Not now</button>
+        </div>
+      </div>
+    );
+  }
+  if (which === 'Contrarian Alert') {
+    return (
+      <div style={{ width: 380, padding: 20,
+        background: 'linear-gradient(180deg, #1a1030, #0F1730)',
+        border: '1.5px solid var(--fifa-purple)', borderRadius: 16,
+        boxShadow: '0 20px 60px -12px rgba(0,0,0,0.8), 0 0 60px -8px var(--fifa-purple)' }}>
+        <div style={{ display: 'flex', gap: 14 }}>
+          <img src="assets/chibi_galaxy.png" width="96" height="96" />
+          <div>
+            <Chip style={{ color: 'var(--fifa-purple)', borderColor: 'rgba(122,63,191,0.3)', fontSize: 10 }}>CONTRARIAN</Chip>
+            <div className="display" style={{ fontSize: 16, marginTop: 6 }}>Paul sees something the market doesn't.</div>
+            <div style={{ fontSize: 12, color: 'var(--t2)', marginTop: 6 }}>
+              <span className="mono" style={{ color: 'var(--fifa-purple)' }}>GER</span> vs <span className="mono">JPN</span> · crowd 71% GER, Paul says <span className="mono" style={{ color: 'var(--gold)' }}>DRAW @ 64%</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  // Empty state
+  return (
+    <div style={{ width: 320, padding: '20px 24px', background: 'linear-gradient(180deg, #182244, #0F1730)',
+      border: '1.5px solid var(--hair-strong)', borderRadius: 16, textAlign: 'center',
+      boxShadow: '0 20px 60px -12px rgba(0,0,0,0.8), 0 0 60px -12px var(--fifa-teal)' }}>
+      <img src="assets/chibi_cheerful.png" width="160" height="160" />
+      <div className="display" style={{ fontSize: 20, marginTop: 4 }}>Paul's got a pick.</div>
+      <div style={{ color: 'var(--t2)', fontSize: 12, marginTop: 6 }}>Pick a match. Dive in.</div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+{
+  "name": "World Cup Inu",
+  "short_name": "WCI",
+  "description": "Pari-mutuel World Cup 2026 betting & prediction markets fronted by Paul the Oracle.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0A0615",
+  "background_color": "#0A0615",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["sports", "finance", "games", "entertainment"],
+  "id": "wci",
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "/icons/icon-72.png",  "sizes": "72x72",  "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-96.png",  "sizes": "96x96",  "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-144.png", "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-152.png", "sizes": "152x152", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-180.png", "sizes": "180x180", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-384.png", "sizes": "384x384", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Place a bet",
+      "short_name": "Bet",
+      "description": "Jump straight to the live matches board",
+      "url": "/matches",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Paul's Picks",
+      "short_name": "Oracle",
+      "description": "See Paul's latest predictions",
+      "url": "/oracle",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "My Bets",
+      "short_name": "Bets",
+      "description": "Your active and settled bets",
+      "url": "/my-bets",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile-home.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Scoreboard home with Paul and live matches"
+    },
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Full dashboard with sidebar and Paul"
+    }
+  ]
+}

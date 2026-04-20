@@ -1,0 +1,528 @@
+/* WCI Dashboard v2 — FIFA26 rainbow + heavy 3D chrome */
+
+:root {
+  /* Deep base */
+  --bg-deep: #0A0615;
+  --bg-surface: #141028;
+  --bg-elevated: #1D1740;
+  --bg-glass: rgba(20, 16, 40, 0.55);
+  --hair: rgba(255, 255, 255, 0.08);
+  --hair-strong: rgba(255, 255, 255, 0.14);
+
+  /* FIFA26 vivid palette (from brand pattern) */
+  --fifa-red:     #E8392C;
+  --fifa-crimson: #B8202F;
+  --fifa-orange:  #FF7A1F;
+  --fifa-yellow:  #F5D020;
+  --fifa-lime:    #9FD634;
+  --fifa-green:   #2BB673;
+  --fifa-teal:    #00B9B2;
+  --fifa-cyan:    #4ED1E6;
+  --fifa-blue:    #2E6FE6;
+  --fifa-purple:  #8B47D6;
+  --fifa-violet:  #6B38B8;
+  --fifa-magenta: #E637A8;
+  --fifa-pink:    #FF6AA8;
+
+  /* Group colors (from infographic, 1:1) */
+  --grp-a: #4AE89E;
+  --grp-b: #FF3B5C;
+  --grp-c: #FF8C1F;
+  --grp-d: #3B7BFF;
+  --grp-e: #7A3AFF;
+  --grp-f: #2DD4BF;
+  --grp-g: #FF6AA8;
+  --grp-h: #4FE0C8;
+  --grp-i: #9B5CFF;
+  --grp-j: #3A8A9E;
+  --grp-k: #FF5533;
+  --grp-l: #5AA9FF;
+
+  /* Semantic */
+  --gold: #F5D020;
+  --gold-deep: #A88900;
+  --gold-dark: #6B5500;
+  --coral: #E8392C;
+  --coral-deep: #8F1F1A;
+  --lime: #9FD634;
+  --usa-red: #B22234;
+  --usa-navy: #0B1F3F;
+
+  /* Text */
+  --t1: #FFFFFF;
+  --t2: #C9C0E8;
+  --t3: #8079A8;
+  --t4: #544E72;
+  --t-inverse: #0A0615;
+
+  /* Motion */
+  --dur-quick: 200ms;
+  --dur-normal: 320ms;
+  --dur-smooth: 520ms;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Tweaks */
+  --rainbow: 1.2;
+  --pattern-opacity: 0.14;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg-deep);
+  color: var(--t1);
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: 'ss01', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100%;
+}
+#root { height: 100%; }
+
+.main-scroll::-webkit-scrollbar { width: 10px; }
+.main-scroll::-webkit-scrollbar-track { background: rgba(10,6,21,0.4); }
+.main-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(245,208,32,0.35), rgba(232,57,44,0.25));
+  border-radius: 5px;
+  border: 2px solid rgba(10,6,21,0.4);
+}
+.main-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(245,208,32,0.55), rgba(232,57,44,0.4));
+}
+
+button { font-family: inherit; }
+
+/* ── Typography ──────────────────────────────── */
+.display {
+  font-family: 'Bricolage Grotesque', 'Inter', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.display-cond {
+  font-family: 'Bricolage Grotesque', 'Inter', sans-serif;
+  font-weight: 800;
+  font-variation-settings: 'wdth' 75;
+  letter-spacing: -0.01em;
+}
+.mono {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--t3);
+}
+
+/* ── Rainbow FIFA background ──────────────────── */
+.bg-fifa {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 20%, rgba(232, 57, 44, 0.22), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 15%, rgba(139, 71, 214, 0.22), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 85%, rgba(0, 185, 178, 0.2), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 85%, rgba(245, 208, 32, 0.14), transparent 60%),
+    linear-gradient(180deg, #0A0615 0%, #0E0A1F 50%, #0A0615 100%);
+}
+
+/* FIFA arc stripes pattern — SVG-ish decorative layer */
+.bg-arcs {
+  position: fixed;
+  inset: -10%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--pattern-opacity);
+  background-image: url('assets/pattern.jpg');
+  background-size: 180% auto;
+  background-position: center 30%;
+  background-repeat: no-repeat;
+  filter: blur(1px) saturate(1.1);
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+}
+
+/* Grain overlay for depth */
+.bg-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+}
+
+/* ── Premium 3D Card ─────────────────────────── */
+.card {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(41, 31, 82, 0.6) 0%, rgba(20, 16, 40, 0.9) 100%);
+  border: 1px solid var(--hair);
+  border-radius: 22px;
+  box-shadow:
+    /* inner top highlight */
+    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.5),
+    /* outer lift */
+    0 1px 2px 0 rgba(0, 0, 0, 0.6),
+    0 8px 16px -6px rgba(0, 0, 0, 0.6),
+    0 24px 48px -16px rgba(0, 0, 0, 0.8),
+    /* colored glow */
+    0 0 calc(60px * var(--rainbow)) -20px var(--card-accent, var(--fifa-teal));
+}
+
+.card-accent-bar {
+  position: absolute;
+  top: 0; left: 20px; right: 20px;
+  height: 3px;
+  background: var(--card-accent, var(--fifa-teal));
+  border-radius: 0 0 3px 3px;
+  box-shadow: 0 0 20px var(--card-accent, var(--fifa-teal));
+}
+
+.card-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: var(--t1);
+  margin: 0;
+}
+
+/* ── Heavy 3D buttons ────────────────────────── */
+.btn-3d {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--t-inverse);
+  background: linear-gradient(180deg, #FFE85B 0%, var(--gold) 50%, var(--gold-deep) 100%);
+  border: 1.5px solid rgba(0, 0, 0, 0.6);
+  border-radius: 14px;
+  padding: 14px 26px;
+  cursor: pointer;
+  position: relative;
+  box-shadow:
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.65),
+    inset 0 -2px 0 0 rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 4px 0 0 var(--gold-deep),
+    0 6px 0 0 var(--gold-dark),
+    0 10px 20px -2px rgba(0, 0, 0, 0.5),
+    0 0 32px -8px var(--gold);
+  transform: translateY(0);
+  transition: transform 120ms var(--ease), box-shadow 120ms var(--ease);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.btn-3d:hover {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.7),
+    inset 0 -2px 0 0 rgba(0, 0, 0, 0.2),
+    0 3px 0 0 var(--gold-deep),
+    0 5px 0 0 var(--gold-dark),
+    0 8px 18px -2px rgba(0, 0, 0, 0.5),
+    0 0 40px -8px var(--gold);
+}
+.btn-3d:active {
+  transform: translateY(5px);
+  box-shadow:
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.7),
+    inset 0 -2px 0 0 rgba(0, 0, 0, 0.25),
+    0 0 0 0 var(--gold-deep),
+    0 1px 0 0 var(--gold-dark),
+    0 2px 6px -1px rgba(0, 0, 0, 0.5);
+}
+.btn-3d:disabled {
+  filter: saturate(0.3) brightness(0.7);
+  cursor: not-allowed;
+}
+
+/* Colored 3D button factory */
+.btn-3d-color {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  position: relative;
+  background: linear-gradient(180deg, var(--btn-light, var(--fifa-purple)), var(--btn-dark, var(--fifa-violet)));
+  box-shadow:
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 -2px 0 0 rgba(0, 0, 0, 0.2),
+    0 3px 0 0 var(--btn-shadow, var(--fifa-violet)),
+    0 5px 0 0 rgba(0, 0, 0, 0.4),
+    0 8px 16px -4px rgba(0, 0, 0, 0.5);
+  transition: transform 120ms var(--ease), box-shadow 120ms var(--ease);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+.btn-3d-color:hover { transform: translateY(1px); box-shadow: inset 0 2px 0 0 rgba(255,255,255,0.35), 0 2px 0 0 var(--btn-shadow), 0 4px 0 0 rgba(0,0,0,0.4), 0 6px 14px -4px rgba(0,0,0,0.5); }
+.btn-3d-color:active { transform: translateY(4px); box-shadow: inset 0 2px 0 0 rgba(255,255,255,0.35), 0 0 0 0 var(--btn-shadow), 0 1px 0 0 rgba(0,0,0,0.4); }
+
+/* Outcome button — colorful 3D */
+.btn-outcome {
+  background: linear-gradient(180deg, rgba(41, 31, 82, 0.9) 0%, rgba(20, 16, 40, 0.9) 100%);
+  color: var(--t1);
+  border: 1.5px solid var(--hair-strong);
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 3px 0 0 rgba(0, 0, 0, 0.5),
+    0 6px 14px -4px rgba(0, 0, 0, 0.5);
+  transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), border-color 160ms;
+  overflow: hidden;
+}
+.btn-outcome::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent, var(--outcome-accent, var(--fifa-teal)) 120%);
+  opacity: 0.18;
+  pointer-events: none;
+}
+.btn-outcome::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 4px;
+  background: var(--outcome-accent, var(--fifa-teal));
+  box-shadow: 0 0 12px var(--outcome-accent, var(--fifa-teal));
+}
+.btn-outcome:hover {
+  transform: translateY(-2px);
+  border-color: var(--outcome-accent, var(--fifa-teal));
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.15),
+    0 5px 0 0 rgba(0, 0, 0, 0.5),
+    0 10px 24px -4px rgba(0, 0, 0, 0.5),
+    0 0 32px -8px var(--outcome-accent, var(--fifa-teal));
+}
+.btn-outcome[data-selected="true"] {
+  border-color: var(--outcome-accent);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.2),
+    0 0 0 2px var(--outcome-accent),
+    0 0 48px -8px var(--outcome-accent);
+}
+
+/* ── Pill / chip ─────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--hair);
+  color: var(--t2);
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  white-space: nowrap;
+}
+.chip-gold {
+  background: linear-gradient(180deg, rgba(245, 208, 32, 0.28), rgba(168, 137, 0, 0.22));
+  border-color: rgba(245, 208, 32, 0.5);
+  color: var(--gold);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 16px -4px var(--gold);
+}
+.chip-live {
+  background: rgba(232, 57, 44, 0.18);
+  border-color: rgba(232, 57, 44, 0.5);
+  color: #FF7060;
+}
+.chip-live::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #FF5040;
+  box-shadow: 0 0 10px #FF5040;
+  animation: live-pulse 1.5s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* Group badge letter tile */
+.group-tile {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  color: #0A0615;
+  background: var(--group-color);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.2),
+    0 2px 0 rgba(0, 0, 0, 0.5),
+    0 4px 10px -2px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ── Glass nav ──────────────────────────────── */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid var(--hair);
+}
+
+/* ── Scrollbars ─────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ── Animations ─────────────────────────────── */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.02); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+  animation: marquee 60s linear infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.4); opacity: 0.7; }
+}
+@keyframes toast-in {
+  from { transform: translateY(-24px) scale(0.96); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes drawer-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes tentacle-peek {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-6px) rotate(-3deg); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  25%      { transform: rotate(-4deg); }
+  75%      { transform: rotate(4deg); }
+}
+@keyframes orb-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+@keyframes orb-glow {
+  0%, 100% { filter: drop-shadow(0 0 20px var(--gold)) drop-shadow(0 0 40px var(--fifa-red)); }
+  50%      { filter: drop-shadow(0 0 30px var(--fifa-yellow)) drop-shadow(0 0 50px var(--fifa-magenta)); }
+}
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  animation: shimmer 2.4s linear infinite;
+}
+
+/* Sidebar nav items */
+.sidebar-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--t2);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 160ms, color 160ms;
+  border: 1px solid transparent;
+}
+.sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--t1);
+}
+.sidebar-item[data-active="true"] {
+  background: linear-gradient(180deg, rgba(245, 208, 32, 0.15), rgba(245, 208, 32, 0.05));
+  border-color: rgba(245, 208, 32, 0.3);
+  color: var(--gold);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 0 20px -8px var(--gold);
+}
+
+/* Pool bar segmented */
+.pool-seg {
+  position: relative;
+  overflow: hidden;
+  height: 10px;
+  border-radius: 5px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+}
+.pool-seg > span {
+  position: relative;
+  display: block;
+  height: 100%;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+/* Stat tile — colored top bar + big number */
+.stat-tile {
+  position: relative;
+  background: linear-gradient(180deg, rgba(41, 31, 82, 0.6), rgba(20, 16, 40, 0.9));
+  border: 1px solid var(--hair);
+  border-radius: 18px;
+  padding: 18px 20px 16px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.08),
+    0 4px 10px -2px rgba(0, 0, 0, 0.5),
+    0 12px 32px -12px rgba(0, 0, 0, 0.7);
+}
+.stat-tile::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  background: radial-gradient(ellipse at top, var(--tile-color, var(--fifa-teal)) 0%, transparent 70%);
+  opacity: 0.2;
+  pointer-events: none;
+}
+.stat-tile::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 2px;
+  background: var(--tile-color, var(--fifa-teal));
+  box-shadow: 0 0 16px var(--tile-color, var(--fifa-teal));
+}
