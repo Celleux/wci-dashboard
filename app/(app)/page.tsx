@@ -1,37 +1,77 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { PaulHeroCard } from "@/components/cards/PaulHeroCard";
+import { NextMatchCard } from "@/components/cards/NextMatchCard";
+import { MatchCard } from "@/components/cards/MatchCard";
+import { LeaderboardPreview } from "@/components/home/LeaderboardPreview";
+import { MyBetsPreview } from "@/components/home/MyBetsPreview";
+import { MOCK_LIVE, MOCK_UPCOMING } from "@/lib/data/mocks";
+
+export default function Scoreboard() {
   return (
-    <main className="relative min-h-screen flex flex-col items-center justify-center px-6 py-16 text-center">
-      <div className="card max-w-xl w-full p-8 sm:p-10" style={{ "--card-accent": "var(--gold)" } as React.CSSProperties}>
-        <div className="card-accent-bar" aria-hidden />
-        <Image
-          src="/assets/logo.png"
-          alt="World Cup Inu"
-          width={96}
-          height={96}
-          priority
-          className="mx-auto mb-6 drop-shadow-2xl"
+    <div className="flex flex-col gap-6 md:gap-8">
+      {/* Hero row — Paul + next match (v0-generated, self-contained) */}
+      <section className="grid gap-4 md:grid-cols-2 md:gap-6">
+        <PaulHeroCard paulSize={280} />
+        <NextMatchCard
+          onPickOutcome={(side) => {
+            // Store-wire lives in lib/store/betSlipStore.ts (future chat);
+            // for now log so we can verify interaction works.
+            console.log("pick", side);
+          }}
         />
-        <div className="label mb-2">boot sequence</div>
-        <h1 className="display text-4xl sm:text-5xl leading-tight mb-4">
-          World Cup Inu
-        </h1>
-        <p className="text-t2 text-base sm:text-lg mb-6">
-          Paul's Oracle is waking up. The dashboard is being generated — this
-          placeholder will be replaced once the v0 batch orchestrator ships the
-          app shell.
-        </p>
-        <div className="flex flex-wrap justify-center gap-2">
-          <span className="chip chip-gold">v0 queue</span>
-          <span className="chip">WC26 · Jun 11 — Jul 19</span>
-          <span className="chip chip-live">installable</span>
+      </section>
+
+      {/* Live matches */}
+      <section>
+        <header className="mb-3 flex items-center justify-between">
+          <h2 className="card-title">Live now</h2>
+          <span className="label">{MOCK_LIVE.length} matches</span>
+        </header>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {MOCK_LIVE.map((m) => (
+            <MatchCard
+              key={m.id}
+              status="live"
+              home={m.teams[0]}
+              away={m.teams[1]}
+              minute={m.minute!}
+              score={m.score!}
+              pool={{ home: m.pools[0], draw: m.pools[1], away: m.pools[2] }}
+              md={m.md}
+              venue={m.venue}
+            />
+          ))}
         </div>
-        <p className="mono text-t3 text-xs mt-8">
-          <span className="opacity-60">build</span>{" "}
-          {new Date().toISOString().slice(0, 10)}
-        </p>
-      </div>
-    </main>
+      </section>
+
+      {/* Upcoming matches */}
+      <section>
+        <header className="mb-3 flex items-center justify-between">
+          <h2 className="card-title">Upcoming</h2>
+          <span className="label">Next 48 hours</span>
+        </header>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {MOCK_UPCOMING.slice(0, 6).map((m) => (
+            <MatchCard
+              key={m.id}
+              status="upcoming"
+              home={m.teams[0]}
+              away={m.teams[1]}
+              kickoff={m.kickoff!}
+              pool={{ home: m.pools[0], draw: m.pools[1], away: m.pools[2] }}
+              md={m.md}
+              venue={m.venue}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Leaderboard + My bets row */}
+      <section className="grid gap-4 md:grid-cols-2 md:gap-6">
+        <LeaderboardPreview />
+        <MyBetsPreview />
+      </section>
+    </div>
   );
 }

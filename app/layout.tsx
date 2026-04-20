@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { OfflineBanner } from "@/components/pwa/OfflineBanner";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -91,7 +93,9 @@ export default function RootLayout({
         <div className="bg-fifa" aria-hidden />
         <div className="bg-arcs" aria-hidden />
         <div className="bg-grain" aria-hidden />
+        <OfflineBanner />
         <div className="relative z-10 min-h-full">{children}</div>
+        <InstallPrompt />
       </body>
     </html>
   );
