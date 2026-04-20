@@ -8,6 +8,20 @@
       "chatId": "hD9qZ4YHh7r",
       "lastError": "fetch failed",
       "finishedAt": "2026-04-20T18:06:19.893Z"
+    },
+    "B": {
+      "status": "in_progress",
+      "turnIdx": 0,
+      "filesWritten": 0,
+      "startedAt": "2026-04-20T18:09:48.488Z",
+      "chatId": "rFpEVpMUQCw"
+    },
+    "C": {
+      "status": "pending",
+      "turnIdx": 0,
+      "filesWritten": 0,
+      "startedAt": "2026-04-20T18:09:59.364Z",
+      "chatId": "7mYTi2iHn51"
     }
   },
   "projectId": "WnkRUmBudjz"

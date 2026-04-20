@@ -257,9 +257,15 @@ async function runChat(
       console.log(`  • Chat id: ${chatId}`);
     }
 
-    // Send every unsent turn (async mode — poll until ready)
+    // Send every unsent turn (async mode — poll until NEW version is ready)
     for (let i = s.turnIdx; i < chat.turns.length; i++) {
       console.log(`  • Sending turn ${i + 1}/${chat.turns.length}`);
+
+      // Capture the version id BEFORE sending so we can detect when a new one arrives
+      const preSnap = (await v0.chats.getById({ chatId: chatId! })) as any;
+      const priorVersionId: string | undefined = preSnap?.latestVersion?.id;
+      console.log(`    ↳ prior version: ${priorVersionId ?? "(none)"}`);
+
       await v0.chats.sendMessage({
         chatId: chatId!,
         message: chat.turns[i],
@@ -267,28 +273,34 @@ async function runChat(
         responseMode: "async",
       });
 
-      // Poll chat until latestVersion.status === completed|failed
-      const deadline = Date.now() + 20 * 60 * 1000; // 20 min per turn
+      // Poll chat until latestVersion.id !== priorVersionId AND status is completed|failed
+      const deadline = Date.now() + 25 * 60 * 1000; // 25 min per turn
       let lastVersionId: string | undefined;
+      let wrote = false;
       while (Date.now() < deadline) {
         await sleep(5000);
         const snap = (await v0.chats.getById({ chatId: chatId! })) as any;
         const lv = snap?.latestVersion;
         if (!lv) continue;
+        if (lv.id === priorVersionId) continue; // still on old version; wait
         if (lastVersionId !== lv.id) {
           lastVersionId = lv.id;
-          console.log(`    ↳ version ${lv.id} status=${lv.status}`);
+          console.log(`    ↳ new version ${lv.id} status=${lv.status}`);
         }
         if (lv.status === "completed") {
           const files = lv.files ?? [];
           const written = syncFilesToDisk(files);
           s.filesWritten += written;
           console.log(`    ↳ wrote ${written} files`);
+          wrote = true;
           break;
         }
         if (lv.status === "failed") {
           throw new Error(`v0 version ${lv.id} failed`);
         }
+      }
+      if (!wrote) {
+        throw new Error(`turn ${i + 1} timed out without a new completed version`);
       }
       s.turnIdx = i + 1;
       saveState(state);
