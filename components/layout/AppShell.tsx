@@ -5,6 +5,8 @@ import { PeekTentacle } from "./PeekTentacle";
 import { TaxTicker } from "./TaxTicker";
 import { MobileHeader } from "./mobile/MobileHeader";
 import { BottomTabBar } from "./mobile/BottomTabBar";
+import { BetSlip } from "@/components/betting/BetSlip";
+import { WhaleBar } from "@/components/home/WhaleBar";
 
 /**
  * AppShell — responsive full-bleed layout.
@@ -27,8 +29,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <TopHeader />
       </div>
 
-      {/* Tax ticker */}
+      {/* Tax ticker + whale feed */}
       <TaxTicker />
+      <WhaleBar />
 
       <div className="relative flex flex-1 min-h-0">
         {/* Desktop sidebar */}
@@ -55,6 +58,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="md:hidden">
         <BottomTabBar />
       </div>
+
+      {/* Global BetSlip drawer (md right-side) / bottom sheet (< md) */}
+      <BetSlip />
     </div>
   );
 }

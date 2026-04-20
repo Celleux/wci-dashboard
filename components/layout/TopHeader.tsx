@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { LogoOrb } from "./LogoOrb";
 import { HeaderWave } from "./HeaderWave";
-import { WalletBadge } from "./WalletBadge";
+import { WalletBadgeClient as WalletBadge } from "./WalletBadgeClient";
 
 const HEADER_H = 88;
 const ORB_SIZE = 132; // bigger than header so it protrudes up + down through notch

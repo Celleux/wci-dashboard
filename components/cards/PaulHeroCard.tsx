@@ -1,256 +1,223 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { PaulHero } from "@/components/paul/PaulHero";
+import Image from "next/image";
+import { Chip } from "@/components/shared/Chip";
+import { FlagRect } from "@/components/shared/FlagRect";
 
 interface PaulHeroCardProps {
-  /** Pass true when the next-match card has been interacted with. */
   reaching?: boolean;
-  /** Responsive Paul size: defaults to 320 (mobile), override for desktop. */
   paulSize?: number;
 }
 
 /**
- * Left hero card on the home page.
- * Shows Paul the Oracle with stats + identity header.
- * Tentacles intentionally overflow the card bounds (overflow: visible).
+ * Hero card — PAUL wordmark + stats on the LEFT, chibi character BIG on the
+ * RIGHT overflowing the card (overflow: visible). Animated conic halo behind
+ * Paul. Bottom row has 3 stat pills (streak / top% / followers).
  */
-export function PaulHeroCard({
-  reaching = false,
-  paulSize = 320,
-}: PaulHeroCardProps) {
-  const prefersReduced = useReducedMotion();
+export function PaulHeroCard({ paulSize = 460 }: PaulHeroCardProps) {
+  const reduce = useReducedMotion();
 
   return (
     <div
-      className="card"
+      className="card relative"
       style={{
         "--card-accent": "var(--fifa-purple)",
+        minHeight: 440,
         padding: 0,
-        height: 520,
         overflow: "visible",
-        position: "relative",
       } as React.CSSProperties}
     >
-      {/* Accent bar */}
       <div className="card-accent-bar" aria-hidden />
 
-      {/* Pattern layer */}
+      {/* Gradient background panel */}
       <div
+        aria-hidden
         style={{
           position: "absolute",
           inset: 0,
           borderRadius: 22,
           overflow: "hidden",
           background:
-            "linear-gradient(180deg, rgba(139,71,214,0.22), rgba(20,16,40,0.95))",
+            "linear-gradient(180deg, rgba(139,71,214,0.25) 0%, rgba(41,31,82,0.5) 45%, rgba(20,16,40,0.95) 100%)",
         }}
-        aria-hidden
       />
 
-      {/* Rotating rainbow glow behind Paul */}
+      {/* Conic rainbow glow behind Paul */}
       <motion.div
         aria-hidden
         style={{
           position: "absolute",
-          inset: "10% 10% -20% -20%",
+          right: "-10%",
+          top: "8%",
+          bottom: "-10%",
+          width: "70%",
           background:
             "conic-gradient(from 0deg, var(--fifa-red), var(--fifa-yellow), var(--fifa-teal), var(--fifa-purple), var(--fifa-magenta), var(--fifa-red))",
-          opacity: 0.16,
-          filter: "blur(50px)",
+          opacity: 0.18,
+          filter: "blur(55px)",
           borderRadius: "50%",
           pointerEvents: "none",
         }}
-        animate={prefersReduced ? {} : { rotate: [0, 360] }}
-        transition={
-          prefersReduced
-            ? {}
-            : { duration: 30, repeat: Infinity, ease: "linear" }
-        }
+        animate={reduce ? {} : { rotate: [0, 360] }}
+        transition={reduce ? {} : { duration: 30, repeat: Infinity, ease: "linear" }}
       />
 
-      {/* Header — text info top-left */}
+      {/* Left column — PAUL + stats + chips */}
       <div
         style={{
           position: "absolute",
-          top: 20,
+          top: 22,
           left: 24,
           zIndex: 4,
           maxWidth: "58%",
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
         }}
       >
         {/* Live badge */}
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span
+            aria-hidden
             style={{
               width: 8,
               height: 8,
               borderRadius: "50%",
               background: "var(--fifa-lime)",
               boxShadow: "0 0 12px var(--fifa-lime)",
-              display: "inline-block",
+              animation: reduce ? undefined : "pulse-dot 1.6s ease-in-out infinite",
             }}
           />
-          <span
-            className="label"
-            style={{ color: "var(--fifa-lime)", fontSize: 10 }}
-          >
-            THE ORACLE &middot; LIVE
+          <span className="label" style={{ color: "var(--fifa-lime)" }}>
+            THE ORACLE · LIVE
           </span>
         </div>
 
-        {/* Name */}
+        {/* PAUL wordmark */}
         <div
           className="display"
           style={{
-            fontSize: "clamp(44px, 8vw, 64px)",
-            letterSpacing: "-0.03em",
-            lineHeight: 0.9,
-            marginTop: 6,
-            background: "linear-gradient(180deg, #fff, var(--gold))",
+            fontSize: "clamp(54px, 9vw, 84px)",
+            lineHeight: 0.88,
+            letterSpacing: "-0.04em",
+            background: "linear-gradient(180deg, #FFF5AE 0%, var(--gold) 50%, #A88900 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
+            textShadow: "0 2px 20px rgba(245,208,32,0.25)",
+            margin: 0,
           }}
         >
           PAUL
         </div>
 
-        {/* Win/loss/ROI row */}
-        <div
-          style={{
-            color: "var(--t2)",
-            fontSize: 12,
-            marginTop: 8,
-            display: "flex",
-            gap: 6,
-            alignItems: "center",
-            flexWrap: "wrap",
-          }}
-        >
-          <span
-            className="mono"
-            style={{ color: "var(--fifa-lime)", fontWeight: 700 }}
-          >
+        {/* W / L / ROI */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <span className="mono" style={{ color: "var(--fifa-lime)", fontWeight: 700, fontSize: 13 }}>
             38W
           </span>
-          <span style={{ color: "var(--t4)" }}>&middot;</span>
-          <span
-            className="mono"
-            style={{ color: "var(--coral)", fontWeight: 700 }}
-          >
+          <span style={{ color: "var(--t4)" }}>·</span>
+          <span className="mono" style={{ color: "var(--coral)", fontWeight: 700, fontSize: 13 }}>
             12L
           </span>
-          <span style={{ color: "var(--t4)" }}>&middot;</span>
-          <span
-            className="mono"
-            style={{ color: "var(--gold)", fontWeight: 700 }}
-          >
+          <span style={{ color: "var(--t4)" }}>·</span>
+          <span className="mono" style={{ color: "var(--gold)", fontWeight: 700, fontSize: 13 }}>
             76% ROI
           </span>
         </div>
 
-        {/* Chips */}
+        {/* Confidence chip */}
+        <Chip kind="gold" className="self-start" style={{ fontSize: 10 }}>
+          78% CONFIDENCE TODAY
+        </Chip>
+
+        {/* USA vs TUR pill */}
         <div
           style={{
-            marginTop: 14,
-            display: "flex",
-            flexDirection: "column",
-            gap: 6,
-            alignItems: "flex-start",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "6px 12px",
+            borderRadius: 999,
+            background: "rgba(10,6,21,0.65)",
+            border: "1px solid var(--hair-strong)",
+            alignSelf: "flex-start",
+            backdropFilter: "blur(6px)",
           }}
         >
-          <span className="chip chip-gold" style={{ fontSize: 10, height: 26 }}>
-            78% CONFIDENCE TODAY
-          </span>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "4px 10px",
-              borderRadius: 999,
-              background: "rgba(10,6,21,0.6)",
-              border: "1px solid var(--hair-strong)",
-            }}
-          >
-            <span
-              className="mono"
-              style={{ fontSize: 11, fontWeight: 700, color: "var(--t1)" }}
-            >
-              USA
-            </span>
-            <span style={{ fontSize: 10, color: "var(--t3)" }}>vs</span>
-            <span
-              className="mono"
-              style={{ fontSize: 11, fontWeight: 700, color: "var(--t1)" }}
-            >
-              TUR
-            </span>
-          </div>
+          <FlagRect code="USA" width={22} height={14} />
+          <span className="mono text-xs" style={{ fontWeight: 700 }}>USA</span>
+          <span className="text-t3 text-[10px]">vs</span>
+          <FlagRect code="TUR" width={22} height={14} />
+          <span className="mono text-xs" style={{ fontWeight: 700 }}>TUR</span>
         </div>
       </div>
 
-      {/* Paul character — bottom-right, overflows card */}
-      <div
+      {/* Paul character — BIG, right-side, overflowing */}
+      <motion.div
         style={{
           position: "absolute",
-          right: -20,
-          bottom: 0,
-          top: 40,
+          right: -30,
+          bottom: -20,
+          top: "12%",
           display: "flex",
           alignItems: "flex-end",
           justifyContent: "flex-end",
-          zIndex: 2,
+          zIndex: 3,
           pointerEvents: "none",
+          width: "55%",
         }}
+        animate={reduce ? {} : { y: [0, -8, 0] }}
+        transition={reduce ? {} : { duration: 4, ease: "easeInOut", repeat: Infinity }}
       >
-        <div
+        <Image
+          src="/assets/chibi_oracle.png"
+          alt="Paul the Oracle"
+          width={paulSize}
+          height={paulSize}
+          priority
           style={{
-            transform: `scale(${paulSize / 460})`,
-            transformOrigin: "bottom right",
+            objectFit: "contain",
+            filter:
+              "drop-shadow(0 24px 48px rgba(0,0,0,0.7)) drop-shadow(0 0 40px rgba(139,71,214,0.45))",
           }}
-        >
-          <PaulHero size={460} reaching={reaching} />
-        </div>
-      </div>
+        />
+      </motion.div>
 
-      {/* Bottom stats bar */}
+      {/* Bottom stat pill row */}
       <div
         style={{
           position: "absolute",
           bottom: 16,
           left: 16,
           right: 16,
-          zIndex: 3,
+          zIndex: 4,
           display: "flex",
           gap: 8,
         }}
       >
-        {(
-          [
-            ["STREAK", "5", "var(--fifa-orange)"],
-            ["TOP %", "0.1%", "var(--gold)"],
-            ["FOLLOWERS", "12.8K", "var(--fifa-teal)"],
-          ] as const
-        ).map(([label, value, color]) => (
+        {([
+          ["STREAK", "5", "var(--fifa-orange)"],
+          ["TOP %", "0.1%", "var(--gold)"],
+          ["FOLLOWERS", "12.8K", "var(--fifa-teal)"],
+        ] as const).map(([label, value, color]) => (
           <div
             key={label}
-            style={{
-              flex: 1,
-              padding: "8px 10px",
-              background: "rgba(10,6,21,0.75)",
-              border: `1px solid ${color}33`,
-              borderRadius: 10,
-              backdropFilter: "blur(10px)",
-            }}
+            className="flex-1 stat-tile"
+            style={
+              {
+                "--tile-color": color,
+                padding: "10px 12px",
+                background: "rgba(10,6,21,0.78)",
+                borderRadius: 12,
+                backdropFilter: "blur(12px)",
+              } as React.CSSProperties
+            }
           >
             <div className="label" style={{ fontSize: 9, color }}>
               {label}
             </div>
-            <div
-              className="display mono"
-              style={{ fontSize: 16, color: "#fff", marginTop: 2 }}
-            >
+            <div className="display mono" style={{ fontSize: 18, color: "#fff", marginTop: 2 }}>
               {value}
             </div>
           </div>
