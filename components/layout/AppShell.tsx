@@ -7,12 +7,13 @@ import { MobileHeader } from "./mobile/MobileHeader";
 import { BottomTabBar } from "./mobile/BottomTabBar";
 
 /**
- * AppShell — responsive layout shell.
+ * AppShell — responsive full-bleed layout.
  *
  * Mobile (< md): MobileHeader + content + BottomTabBar, safe-area aware.
- * Desktop (>= md): TopHeader + LeftSidebar + content + PeekTentacle.
+ * Desktop (>= md): TopHeader + LeftSidebar(260) + content + peek tentacle.
  *
- * All toggling is CSS-only (no useEffect/useViewport) so SSR is stable.
+ * Content is FULL-BLEED — no max-width wrapper. The PeekTentacle hangs from
+ * the right edge so the glowing ring sticks out without a visible scroll gap.
  */
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -26,29 +27,28 @@ export function AppShell({ children }: { children: ReactNode }) {
         <TopHeader />
       </div>
 
-      {/* Tax ticker — inline under header on all breakpoints */}
+      {/* Tax ticker */}
       <TaxTicker />
 
-      <div className="flex flex-1 min-h-0">
+      <div className="relative flex flex-1 min-h-0">
         {/* Desktop sidebar */}
         <div className="hidden md:flex">
           <LeftSidebar />
         </div>
 
+        {/* Main content fills the rest of the viewport. No max-width. */}
         <main
           role="main"
           id="main"
-          className="main-scroll relative flex-1 min-w-0 overflow-y-auto pb-[calc(72px+var(--sa-bottom))] md:pb-0 sa-pl sa-pr"
+          className="main-scroll relative flex-1 min-w-0 overflow-y-auto pb-[calc(72px+var(--sa-bottom))] md:pb-10"
         >
-          <div className="mx-auto w-full max-w-[1400px] px-4 pt-4 pb-10 md:px-6 md:pt-6">
+          <div className="w-full px-4 pt-4 pb-10 md:px-8 md:pt-6 md:pr-[96px] xl:pr-[112px]">
             {children}
           </div>
         </main>
 
-        {/* Desktop peek tentacle */}
-        <div className="hidden md:flex">
-          <PeekTentacle />
-        </div>
+        {/* Desktop peek tentacle — fixed to the right edge */}
+        <PeekTentacle />
       </div>
 
       {/* Mobile bottom tab bar */}
