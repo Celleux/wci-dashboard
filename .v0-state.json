@@ -10,18 +10,20 @@
       "finishedAt": "2026-04-20T18:06:19.893Z"
     },
     "B": {
-      "status": "in_progress",
-      "turnIdx": 0,
-      "filesWritten": 0,
+      "status": "done",
+      "turnIdx": 1,
+      "filesWritten": 1,
       "startedAt": "2026-04-20T18:09:48.488Z",
-      "chatId": "rFpEVpMUQCw"
+      "chatId": "rFpEVpMUQCw",
+      "finishedAt": "2026-04-20T18:23:43.003Z"
     },
     "C": {
-      "status": "pending",
-      "turnIdx": 0,
-      "filesWritten": 0,
+      "status": "done",
+      "turnIdx": 1,
+      "filesWritten": 1,
       "startedAt": "2026-04-20T18:09:59.364Z",
-      "chatId": "7mYTi2iHn51"
+      "chatId": "7mYTi2iHn51",
+      "finishedAt": "2026-04-20T18:27:13.656Z"
     }
   },
   "projectId": "WnkRUmBudjz"

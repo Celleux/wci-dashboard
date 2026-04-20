@@ -13,6 +13,18 @@
 import { config as loadEnv } from "dotenv";
 loadEnv({ path: ".env.local" });
 loadEnv();
+
+// Patch global fetch so v0's sync sendMessage (which can take 10–20 min for big
+// prompts) doesn't hit Node's default socket timeouts.
+const _realFetch = globalThis.fetch;
+const LONG_TIMEOUT_MS = 30 * 60 * 1000; // 30 min
+globalThis.fetch = (input: any, init: any = {}) => {
+  if (!init.signal) {
+    init = { ...init, signal: AbortSignal.timeout(LONG_TIMEOUT_MS) };
+  }
+  return _realFetch(input, init);
+};
+
 import { createClient } from "v0-sdk";
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import { dirname, resolve, relative } from "node:path";
@@ -131,6 +143,7 @@ const PROTECTED_PATHS = new Set([
   "tailwind.config.js",
   "app/globals.css",
   "app/layout.tsx",
+  "app/page.tsx",
   "app/sw.ts",
   "app/icon.png",
   "app/favicon.ico",
@@ -257,53 +270,43 @@ async function runChat(
       console.log(`  • Chat id: ${chatId}`);
     }
 
-    // Send every unsent turn (async mode — poll until NEW version is ready)
+    // Send every unsent turn (sync mode — sendMessage returns the full chat
+    // with updated latestVersion.files).
     for (let i = s.turnIdx; i < chat.turns.length; i++) {
       console.log(`  • Sending turn ${i + 1}/${chat.turns.length}`);
-
-      // Capture the version id BEFORE sending so we can detect when a new one arrives
       const preSnap = (await v0.chats.getById({ chatId: chatId! })) as any;
       const priorVersionId: string | undefined = preSnap?.latestVersion?.id;
       console.log(`    ↳ prior version: ${priorVersionId ?? "(none)"}`);
 
-      await v0.chats.sendMessage({
+      const resp = (await v0.chats.sendMessage({
         chatId: chatId!,
         message: chat.turns[i],
         modelConfiguration: { thinking: chat.thinking === true },
-        responseMode: "async",
-      });
+        responseMode: "sync",
+      })) as any;
 
-      // Poll chat until latestVersion.id !== priorVersionId AND status is completed|failed
-      const deadline = Date.now() + 25 * 60 * 1000; // 25 min per turn
-      let lastVersionId: string | undefined;
-      let wrote = false;
-      while (Date.now() < deadline) {
-        await sleep(5000);
-        const snap = (await v0.chats.getById({ chatId: chatId! })) as any;
-        const lv = snap?.latestVersion;
-        if (!lv) continue;
-        if (lv.id === priorVersionId) continue; // still on old version; wait
-        if (lastVersionId !== lv.id) {
-          lastVersionId = lv.id;
-          console.log(`    ↳ new version ${lv.id} status=${lv.status}`);
-        }
-        if (lv.status === "completed") {
-          const files = lv.files ?? [];
-          const written = syncFilesToDisk(files);
-          s.filesWritten += written;
-          console.log(`    ↳ wrote ${written} files`);
-          wrote = true;
-          break;
-        }
-        if (lv.status === "failed") {
+      let lv = resp?.latestVersion;
+      // Some sync responses return before the version finishes building;
+      // poll briefly until the version id has changed AND status is completed.
+      const deadline = Date.now() + 10 * 60 * 1000;
+      while (Date.now() < deadline && (!lv || lv.id === priorVersionId || lv.status !== "completed")) {
+        if (lv?.status === "failed") {
           throw new Error(`v0 version ${lv.id} failed`);
         }
+        await sleep(4000);
+        const snap = (await v0.chats.getById({ chatId: chatId! })) as any;
+        lv = snap?.latestVersion;
+        console.log(`    ↳ poll: version ${lv?.id} status=${lv?.status}`);
       }
-      if (!wrote) {
-        throw new Error(`turn ${i + 1} timed out without a new completed version`);
+      if (!lv || lv.id === priorVersionId || lv.status !== "completed") {
+        throw new Error(`turn ${i + 1} never produced a new completed version`);
       }
+      const files = lv.files ?? [];
+      const written = syncFilesToDisk(files);
+      s.filesWritten += written;
       s.turnIdx = i + 1;
       saveState(state);
+      console.log(`    ↳ wrote ${written} files (version ${lv.id})`);
     }
 
     s.status = "done";
