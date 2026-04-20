@@ -1,0 +1,14 @@
+{
+  "chats": {
+    "A": {
+      "status": "done",
+      "turnIdx": 1,
+      "filesWritten": 19,
+      "startedAt": "2026-04-20T17:59:28.773Z",
+      "chatId": "hD9qZ4YHh7r",
+      "lastError": "fetch failed",
+      "finishedAt": "2026-04-20T18:06:19.893Z"
+    }
+  },
+  "projectId": "WnkRUmBudjz"
+}

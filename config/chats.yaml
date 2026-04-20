@@ -1,0 +1,399 @@
+# v0 Platform API batch plan — one chat per surface.
+# Orchestrator: scripts/build-dashboard.ts
+# Each chat inherits the project `instructions` (design-system.md) automatically.
+# Locked reference files: /public/reference/*.jsx + /public/reference/styles.css
+# These are uploaded once at project scope and attached via `chats.init({ type: 'files', lockAllFiles: true })` when useful.
+
+project:
+  name: "WCI Dashboard"
+  description: "World Cup Inu — Pari-mutuel betting & prediction markets for WC26, fronted by Paul the Octopus Oracle."
+  instructionsFile: "config/design-system.md"
+
+# Reference files that every chat reads as design law (locked so v0 never rewrites them).
+# Paths relative to repo root. They are remapped to reference/<name> inside the chat.
+referenceFiles:
+  - "config/design-system.md"
+  - "public/reference/styles.css"
+  - "public/reference/components.jsx"
+  - "public/reference/layout.jsx"
+  - "public/reference/panels.jsx"
+  - "public/reference/paul.jsx"
+  - "public/reference/betslip.jsx"
+  - "public/reference/toasts.jsx"
+  - "public/reference/data.jsx"
+  - "public/reference/flags.jsx"
+  - "app/globals.css"
+
+chats:
+  - id: A
+    title: "App shell — desktop + mobile header, sidebar, bottom-tab, tax ticker"
+    thinking: true
+    turns:
+      - |
+        Build the app shell.
+
+        Output these files (create or overwrite under ./):
+        - components/layout/TopHeader.tsx          (desktop/tablet >= md)
+        - components/layout/LogoOrb.tsx
+        - components/layout/HeaderWave.tsx         (notched SVG edge)
+        - components/layout/LeftSidebar.tsx        (>= md)
+        - components/layout/SidebarNavItem.tsx
+        - components/layout/NavIcon.tsx            (8 icons: home, live, slip, trophy, octopus, card, stake, doc)
+        - components/layout/ProfileCard.tsx
+        - components/layout/WalletCard.tsx
+        - components/layout/WalletBadge.tsx
+        - components/layout/RankCard.tsx
+        - components/layout/StreakBonus.tsx
+        - components/layout/PeekTentacle.tsx       (floats on right edge)
+        - components/layout/TaxTicker.tsx          (rewards/ecosystem/total routed)
+        - components/layout/mobile/MobileHeader.tsx  (64px notched, < md only)
+        - components/layout/mobile/BottomTabBar.tsx  (5 tabs, safe-area aware)
+        - components/layout/mobile/MobileDrawerSheet.tsx  (full-screen "More" sheet)
+        - components/layout/AppShell.tsx           (composes everything; picks mobile vs desktop via CSS only — no JS viewport checks)
+        - app/(app)/layout.tsx                     (wraps children in AppShell)
+
+        Requirements:
+        - MobileHeader visible < md, TopHeader visible >= md via Tailwind utilities.
+        - BottomTabBar visible < md, LeftSidebar visible >= md.
+        - Use the design-system tokens exclusively. Reference components.jsx and layout.jsx in /public/reference as INTENT; reimplement in React 19 TS.
+        - Motion via Framer Motion. Logo orb floats + glows (animate-orb-float, animate-orb-glow).
+        - TaxTicker reads from a server action `getTaxTicker()` (stub import from '@/lib/api/etherscan' which doesn't exist yet — create the stub `lib/api/etherscan.ts` returning {rewardsThisWeek: 0, ecosystemThisWeek: 0, totalRouted: 0}).
+        - Nav items link to: /, /matches, /oracle, /cope, /leaderboard, /staking, /my-bets, /docs.
+        - Active state via Next `usePathname`.
+
+  - id: B
+    title: "Shared primitives — chip, countdown, sparkline, pool bar, confidence, flags, team tile"
+    turns:
+      - |
+        Build the shared primitive components.
+
+        Output:
+        - components/shared/AccentCard.tsx     (wraps .card, accepts accent CSS var)
+        - components/shared/Chip.tsx           (variants: default, gold, live, group)
+        - components/shared/Countdown.tsx      (T-HH:MM:SS with digit tick flip)
+        - components/shared/TickDigit.tsx
+        - components/shared/CountUp.tsx        (eased 0→N)
+        - components/shared/Sparkline.tsx      (SVG path w/ optional fill)
+        - components/shared/ConfidenceBar.tsx  (horizontal with shimmer)
+        - components/shared/PoolBar.tsx        (stacked H/D/A 6px tall)
+        - components/shared/FlagRect.tsx       (reads /public/flags/{code}.svg via Image)
+        - components/shared/TeamTile.tsx       (sm/md/lg sizes; badge + flag)
+        - components/shared/FlagFrame.tsx      (3D-lifted flag holder)
+        - components/shared/GroupTile.tsx      (letter tile with group color var)
+        - lib/data/teams.ts                    (export TEAM_NAMES, TEAM_COLORS, GROUPS from prototype data)
+        - lib/utils/cn.ts                      (`cn(...classes)` helper using clsx+tailwind-merge; install if missing)
+
+        Rules:
+        - Countdown & TickDigit run via requestAnimationFrame, pause when offscreen via IntersectionObserver.
+        - PoolBar uses .pool-seg + span, colors per outcome: home=fifa-teal, draw=t3, away=fifa-orange.
+        - FlagRect renders `<img src={`/flags/${code}.svg`} />` with fallback linear-gradient from TEAM_COLORS.
+
+  - id: C
+    title: "Paul character — rig, tentacles, ball, hero card"
+    turns:
+      - |
+        Port Paul the Octopus character to React + Framer Motion.
+
+        Output:
+        - components/paul/PaulStudio.tsx       (full 8-tentacle rig, 220–520px size prop)
+        - components/paul/PaulHero.tsx         (simplified for card display)
+        - components/paul/UpTentacle.tsx       (upward curling w/ ball + suction cups)
+        - components/paul/BaseTentacle.tsx     (downward meditation pose)
+        - components/paul/SoccerBall.tsx       (pentagon-hex pattern)
+        - components/cards/PaulHeroCard.tsx    (left hero on home; scales responsive)
+        - components/cards/NextMatchCard.tsx   (right hero on home; countdown + outcomes + pool bar + Paul pick)
+
+        Rules:
+        - All SVG. No PNGs for tentacles. No Lottie.
+        - Use Framer Motion for sway & wiggle. Wrap in useReducedMotion guard.
+        - Pause animations when offscreen via useInView (framer-motion).
+        - NextMatchCard has three btn-outcome buttons (H / DRAW / A) with colors teal / t3 / orange. Accepts `onPickOutcome(side)` prop.
+
+  - id: D
+    title: "Match cards — Live / Upcoming / Final variants + outcome button + row"
+    turns:
+      - |
+        Build the match card components.
+
+        Output:
+        - components/cards/MatchCard.tsx          (switch on status: live/upcoming/final)
+        - components/cards/MatchRow.tsx           (compact list row for /matches)
+        - components/betting/OutcomeBtn.tsx       (reusable; 48px min on mobile, 56px desktop)
+        - components/cards/LiveMatchCard.tsx     (shows minute badge, animated pulse)
+        - components/cards/UpcomingMatchCard.tsx (shows countdown + outcome buttons + pool bar)
+        - components/cards/FinalMatchCard.tsx    (shows result chip, payout if user bet)
+        - components/cards/MatchesSection.tsx    (wraps multiple cards in a section with label + horizontal scroll on mobile)
+
+        Requirements:
+        - Use our Fixture type from design-system.md §8.
+        - Live card's minute badge uses .chip-live; animated dot.
+        - On mobile (< md) cards stack full-width with 16px horizontal gutters.
+        - On md+ cards are in a 2-col grid with 24px gap.
+        - MatchesSection on mobile uses Embla horizontal scroll with snap.
+
+  - id: E
+    title: "Bet slip — desktop drawer + Vaul mobile bottom sheet + stake input + toasts"
+    turns:
+      - |
+        Build the full betting flow UI.
+
+        Output:
+        - components/betting/BetSlip.tsx                 (≥ md right drawer, Framer AnimatePresence)
+        - components/betting/StakeInput.tsx
+        - components/betting/QuickChips.tsx              (10, 50, 100, MAX)
+        - components/betting/SubmitButton.tsx            (uses .btn-3d)
+        - components/betting/mobile/BetSheet.tsx         (< md; Vaul bottom sheet, 40/90/100 snap)
+        - components/toasts/ToastRegion.tsx              (aria-live polite, safe-area aware; top on desktop, bottom on mobile)
+        - components/toasts/WinToast.tsx
+        - components/toasts/LossToast.tsx
+        - components/toasts/ContrarianToast.tsx
+        - components/toasts/EmptyState.tsx
+        - lib/store/betSlipStore.ts                      (zustand: pick, stake, status phases)
+        - lib/store/toastStore.ts                        (zustand: toasts[])
+
+        Rules:
+        - BetSlip and BetSheet consume the same zustand store; render conditionally via Tailwind responsive utilities.
+        - StakeInput: inputMode=decimal + pattern for numeric keyboard on mobile.
+        - Submit → status phases idle → submitting → flying → idle; play tentacle wiggle on submit.
+        - Haptics: `navigator.vibrate([10])` on submit, `[60,40,60]` on win toast, `[20,40,20]` on loss.
+        - Toast auto-dismiss after 4500ms; respects prefers-reduced-motion.
+
+  - id: F
+    title: "Home / Scoreboard page — composes hero, live, upcoming, leaderboard strip, oracle strip"
+    turns:
+      - |
+        Build the home scoreboard at app/(app)/page.tsx and its server data fetchers.
+
+        Output:
+        - app/(app)/page.tsx                            (Server Component; streams sections)
+        - components/home/HeroRow.tsx                   (grid: PaulHeroCard + NextMatchCard)
+        - components/home/LiveMatchesStrip.tsx
+        - components/home/UpcomingMatchesGrid.tsx
+        - components/home/OracleStrip.tsx               (horizontal scroll of OraclePick cards)
+        - components/home/LeaderboardPreview.tsx        (top 5, link to full)
+        - components/home/MyBetsPreview.tsx             (active bets + last 3 settled)
+        - components/home/TaxTickerRow.tsx              (inline, secondary placement; primary is in AppShell)
+        - lib/data/mocks.ts                             (export MOCK_FIXTURES, MOCK_POOLS, MOCK_LEADERBOARD, MOCK_PROFILE; types from lib/data/teams.ts)
+
+        Rules:
+        - Each section wrapped in a Suspense boundary with a skeleton.
+        - Skeletons use .shimmer helper.
+        - On mobile the two-column HeroRow stacks vertically; Paul above Next Match.
+
+  - id: G
+    title: "Matches index + detail pages"
+    turns:
+      - |
+        Build the full match listing and detail pages.
+
+        Output:
+        - app/(app)/matches/page.tsx               (filters: live/upcoming/final, group, matchday; calendar toggle)
+        - app/(app)/matches/[fixtureId]/page.tsx   (detail)
+        - components/matches/MatchFilters.tsx
+        - components/matches/MatchCalendar.tsx
+        - components/matches/MatchDetailHero.tsx
+        - components/matches/H2HHistory.tsx
+        - components/matches/TeamForm.tsx
+        - components/matches/ComparisonChips.tsx   (Poly / Azuro / Pool implied %)
+        - components/matches/LiveEventFeed.tsx     (goals, cards, subs)
+        - lib/hooks/useFixtures.ts                 (TanStack Query; reads /api/fixtures)
+        - lib/hooks/useFixture.ts                  (single fixture by id)
+
+        Rules:
+        - Virtualize the full list on mobile if > 40 rows (use @tanstack/react-virtual — add to deps).
+        - Detail page streams: hero first, then pool + oracle, then H2H + form, then live event feed.
+        - Mobile: sticky "Place Bet" CTA pinned to bottom above tab bar.
+
+  - id: H
+    title: "Oracle page — Paul's picks grid, record chart, Confession carousel, Ledger gallery"
+    turns:
+      - |
+        Build the Paul Oracle page.
+
+        Output:
+        - app/(app)/oracle/page.tsx
+        - components/oracle/PaulRecordChart.tsx     (recharts W/L/D over time)
+        - components/oracle/OraclePickCard.tsx
+        - components/oracle/PickBreakdown.tsx       (shows model / Pinnacle / Polymarket contribs)
+        - components/oracle/ConfessionCarousel.tsx  (Embla)
+        - components/oracle/LedgerGallery.tsx       (weekly Sunday threads)
+        - components/oracle/AccuracyByPhase.tsx     (bar chart: group/R32/R16/QF/SF/F)
+        - lib/hooks/useOraclePicks.ts
+
+        Rules:
+        - The record chart is responsive and honors reduced-motion.
+        - ConfessionCarousel has a "Paul admits this one's close" ribbon.
+        - PickBreakdown shows three bars with weights (w_model, w_pinnacle, w_poly).
+
+  - id: I
+    title: "Cope Cards page + components"
+    turns:
+      - |
+        Build the Cope Cards gallery.
+
+        Output:
+        - app/(app)/cope/page.tsx
+        - components/cope/CopeCard.tsx              (the card itself; wallet handle redacted if opt-out)
+        - components/cope/CopeFeed.tsx              (global grid, real-time feel)
+        - components/cope/RoastQueue.tsx            (Premium $25 queue names)
+        - components/cope/ShareButton.tsx           (X + TikTok deep links)
+        - components/cope/CopeFilters.tsx           (by amount, team, date)
+
+        Rules:
+        - Grid: 1 col mobile, 2 col sm, 3 col lg, 4 col xl.
+        - Card uses .card + team color accent. Displays Paul's one-liner roast.
+
+  - id: J
+    title: "Leaderboard page — 4 tabs"
+    turns:
+      - |
+        Build the leaderboards.
+
+        Output:
+        - app/(app)/leaderboard/page.tsx
+        - components/leaderboard/LeaderboardTabs.tsx   (Reward / Grudge / Paul's Bankers / All-time)
+        - components/leaderboard/LeaderboardTable.tsx
+        - components/leaderboard/BadgeChip.tsx          (oracle / whale / streak)
+        - components/leaderboard/RankBadge.tsx
+        - components/leaderboard/YouHighlight.tsx
+
+        Rules:
+        - Mobile: tabs are horizontally scrollable; table becomes a card list.
+
+  - id: K
+    title: "Staking + My Bets pages"
+    turns:
+      - |
+        Build /staking (Paul's Pocket + Merkle claim) and /my-bets.
+
+        Output:
+        - app/(app)/staking/page.tsx
+        - components/staking/HoldingStatusCard.tsx     (100K WCI threshold, progress)
+        - components/staking/AutoFollowToggle.tsx
+        - components/staking/MerkleClaimCard.tsx
+        - components/staking/RewardsHistoryTable.tsx
+
+        - app/(app)/my-bets/page.tsx
+        - components/bets/BetsTabs.tsx                 (Active / Pending / Won / Lost)
+        - components/bets/BetRow.tsx
+        - components/bets/PnLChart.tsx                 (recharts line)
+        - components/bets/ExportCSVButton.tsx
+
+  - id: L
+    title: "Profile + Settings + Docs pages"
+    turns:
+      - |
+        Output:
+        - app/(app)/profile/[handle]/page.tsx
+        - components/profile/ProfileHero.tsx
+        - components/profile/BadgeRow.tsx
+        - components/profile/PublicBetHistory.tsx
+        - components/profile/CopeCardsOwned.tsx
+
+        - app/(app)/settings/page.tsx
+        - components/settings/HandleForm.tsx
+        - components/settings/AvatarPicker.tsx         (Paul chibi variants)
+        - components/settings/NotificationPrefs.tsx
+        - components/settings/WalletVisibilityToggle.tsx
+
+        - app/(marketing)/docs/page.tsx               (public-facing FAQ / how-it-works)
+        - components/docs/DocsSection.tsx
+        - components/docs/HowParimutuelWorks.tsx
+        - components/docs/TaxExplainer.tsx
+
+  - id: M
+    title: "Admin panel"
+    turns:
+      - |
+        Output:
+        - app/admin/page.tsx                          (role-gate; shows "Not authorized" unless cookie/role ok — placeholder, real auth deferred)
+        - components/admin/MarketManager.tsx          (create/settle/void)
+        - components/admin/PickPoster.tsx             (post Paul's pick on-chain — UI only)
+        - components/admin/RoastQueueReview.tsx
+        - components/admin/TreasuryHedgeLog.tsx
+
+  - id: N
+    title: "API routes — thin proxies + SSE channel"
+    turns:
+      - |
+        Output all route handlers under app/api/:
+        - app/api/fixtures/route.ts       (API-Football proxy; accepts ?status=, ?group=, ?md=; cached 60s)
+        - app/api/odds/route.ts           (The Odds API proxy; 60s)
+        - app/api/polymarket/route.ts     (Polymarket Gamma; 120s)
+        - app/api/oracle/route.ts         (POST {fixtureId} → OraclePick)
+        - app/api/pools/route.ts          (GET list, GET /api/pools/[fixtureId], POST admin seed)
+        - app/api/bets/route.ts           (POST place, GET list for user, PATCH settle)
+        - app/api/cope/route.ts           (feed + own)
+        - app/api/leaderboard/route.ts    (type=reward|grudge|banker|alltime)
+        - app/api/tax-ticker/route.ts     (Etherscan poll; 60s)
+        - app/api/sse/[channel]/route.ts  (Server-Sent Events for live-pool, live-score, bet-feed)
+
+        Rules:
+        - Each route uses Next 16 Route Handlers (NextRequest/NextResponse).
+        - Zod-validate inputs.
+        - Wrap external fetches in a 5s timeout; return 503 with {source, cached:true} if you served from cache.
+        - NEVER expose secret keys to client — read from process.env.
+
+  - id: O
+    title: "Business logic library — oracle, parimutuel, devig, Elo, Merkle"
+    thinking: true
+    turns:
+      - |
+        Output all files under lib/:
+        - lib/api/api-football.ts     (getWC2026Fixtures, getLiveFixture, getLineups)
+        - lib/api/odds-api.ts         (getWCOdds → ReferenceOdds[] with median consensus + de-vigged fair probs)
+        - lib/api/pinnacle.ts         (via RapidAPI relay; sport_id=29 soccer)
+        - lib/api/polymarket.ts       (getWCPolymarketOutrights, getPolymarketMatch)
+        - lib/api/azuro.ts            (subgraph GraphQL)
+        - lib/api/etherscan.ts        (already stubbed; fill in)
+
+        - lib/oracle/elo.ts           (World Football Elo loader, K=60, neutral venue adj)
+        - lib/oracle/dixon-coles.ts   (Poisson + Dixon-Coles correction; λ seeded from Elo diff)
+        - lib/oracle/devig.ts         (proportional + Shin)
+        - lib/oracle/paul.ts          (ensemble: 0.40 DC + 0.40 Pinnacle + 0.20 Polymarket, Brier-recalibrated weights)
+
+        - lib/pool/parimutuel.ts      (pool → odds → implied probs, zero-vig)
+        - lib/web3/wagmi-config.ts    (WalletConnect + injected + Coinbase + MetaMask mobile)
+        - lib/web3/contracts.ts       (ABI stubs for WCI token, betting, cope NFT, merkle distributor)
+        - lib/web3/merkle.ts          (merkle proof claim helpers)
+
+        Rules:
+        - All files typed, no `any`.
+        - Export pure functions where possible for backtesting.
+
+  - id: P
+    title: "PWA polish — install prompts, offline banner, update toast, pull-to-refresh"
+    turns:
+      - |
+        Output:
+        - components/pwa/InstallPromptIOS.tsx       (bottom banner, arrow to share button)
+        - components/pwa/InstallPromptAndroid.tsx   (captures beforeinstallprompt)
+        - components/pwa/InstallPromptProvider.tsx  (picks iOS vs Android at runtime)
+        - components/pwa/OfflineBanner.tsx          (aria-live; navigator.onLine listener)
+        - components/pwa/UpdateAvailableToast.tsx   (listens to serviceworker 'controllerchange')
+        - components/shared/PullToRefresh.tsx       (custom hook + wrapper; wired to TanStack Query invalidations)
+        - lib/hooks/useOnline.ts
+        - lib/hooks/useHaptic.ts
+        - lib/hooks/useInstallPrompt.ts
+
+        Rules:
+        - iOS detection via `/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream`.
+        - Defer InstallPrompt until after 30s on site OR 2nd session (persist via localStorage).
+        - OfflineBanner renders sticky-top-0, z-50, yellow-amber, not red (don't panic users).
+
+  - id: Q
+    title: "Final polish — skeletons, error boundary, a11y, Sentry stub, keyboard shortcuts"
+    turns:
+      - |
+        Output:
+        - app/global-error.tsx                    (generic error page)
+        - components/shared/ErrorBoundary.tsx
+        - components/shared/Skeleton.tsx          (use .shimmer)
+        - components/shared/KeyboardShortcutsProvider.tsx  (⌘K, B, P; portal dialog)
+        - lib/a11y/focusRing.css                  (adds to globals via @import — skip if risky, add classNames instead)
+        - lib/analytics/posthog.ts                (env-gated stub)
+
+        Rules:
+        - Add a SkipToContent link in AppShell.
+        - Add `role="main"` landmark to app/(app)/layout.tsx.
+        - Global error surfaces Paul asleep image.
