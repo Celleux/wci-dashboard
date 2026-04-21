@@ -140,9 +140,14 @@ async function main() {
   console.log(`  total bytes: ${(bytes / 1024).toFixed(0)} KB`);
 
   console.log(`\nCreating sync chat in project ${state.projectId}…`);
+  // Use GitHub repo mode — 20-file limit on type:files, repo mode imports the
+  // whole tree at once.
+  const REPO_URL = process.env.WCI_REPO_URL ?? "https://github.com/Celleux/wci-dashboard";
+  const REPO_BRANCH = process.env.WCI_REPO_BRANCH ?? "main";
+  console.log(`  using repo: ${REPO_URL} @ ${REPO_BRANCH}`);
   const initResp = (await v0.chats.init({
-    type: "files",
-    files: files.map((f) => ({ name: f.name, content: f.content })),
+    type: "repo",
+    repo: { url: REPO_URL, branch: REPO_BRANCH },
     projectId: state.projectId,
     chatPrivacy: "private",
     name: `WCI Dashboard · main sync · ${new Date().toISOString().slice(0, 16)}`,
