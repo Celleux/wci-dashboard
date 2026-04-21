@@ -1,9 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-// RainbowKit stylesheet — imported from the root so bundlers (Vercel and v0)
-// resolve the node_modules path consistently.
-import "@rainbow-me/rainbowkit/styles.css";
 import { OfflineBanner } from "@/components/pwa/OfflineBanner";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { Web3ProviderClient } from "@/components/providers/Web3ProviderClient";
@@ -93,6 +90,15 @@ export default function RootLayout({
       className={`${bricolage.variable} ${inter.variable} ${jetbrains.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        {/* RainbowKit stylesheet loaded via CDN <link> so v0's preview bundler
+            doesn't need to resolve the node_modules CSS path. Version pinned
+            to match our installed @rainbow-me/rainbowkit (2.2.x). */}
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@rainbow-me/rainbowkit@2.2.10/dist/index.css"
+        />
+      </head>
       <body className="min-h-full bg-bg-deep text-t1">
         <div className="bg-fifa" aria-hidden />
         <div className="bg-arcs" aria-hidden />
