@@ -12,11 +12,11 @@ interface TabItem {
 }
 
 const TABS: TabItem[] = [
-  { label: "Home",    href: "/",         icon: "home" },
-  { label: "Matches", href: "/matches",  icon: "live",    badge: 3 },
-  { label: "Oracle",  href: "/oracle",   icon: "octopus" },
-  { label: "Bets",    href: "/my-bets", icon: "slip",    badge: 3 },
-  { label: "More",    href: "/menu",     icon: "trophy" },
+  { label: "Home",     href: "/",          icon: "home" },
+  { label: "Matches",  href: "/matches",   icon: "live",   badge: 3 },
+  { label: "Transfer", href: "/transfer",  icon: "stake" },
+  { label: "Bets",     href: "/my-bets",  icon: "slip",   badge: 3 },
+  { label: "More",     href: "/menu",      icon: "trophy" },
 ];
 
 /**

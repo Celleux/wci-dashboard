@@ -8,14 +8,15 @@ import { RankCard } from "./RankCard";
 import { StreakBonus } from "./StreakBonus";
 
 const NAV_ITEMS: NavItemDef[] = [
-  { key: "home",        label: "Dashboard",    href: "/",           icon: "home" },
-  { key: "matches",     label: "Live Matches", href: "/matches",    icon: "live",    badge: 3 },
-  { key: "bets",        label: "My Bets",      href: "/my-bets",   icon: "slip",    badge: 3 },
-  { key: "leaderboard", label: "Leaderboard",  href: "/leaderboard", icon: "trophy" },
-  { key: "oracle",      label: "Paul's Oracle", href: "/oracle",   icon: "octopus" },
-  { key: "cope",        label: "Cope Cards",   href: "/cope",       icon: "card" },
-  { key: "staking",     label: "Staking",      href: "/staking",   icon: "stake" },
-  { key: "docs",        label: "Docs",         href: "/docs",       icon: "doc" },
+  { key: "home",        label: "Dashboard",       href: "/",           icon: "home" },
+  { key: "matches",     label: "Live Matches",    href: "/matches",    icon: "live",    badge: 3 },
+  { key: "bets",        label: "My Bets",         href: "/my-bets",   icon: "slip",    badge: 3 },
+  { key: "transfer",    label: "Transfer Window", href: "/transfer",   icon: "stake" },
+  { key: "leaderboard", label: "Leaderboard",     href: "/leaderboard", icon: "trophy" },
+  { key: "oracle",      label: "Paul's Oracle",   href: "/oracle",   icon: "octopus" },
+  { key: "cope",        label: "Cope Cards",      href: "/cope",       icon: "card" },
+  { key: "staking",     label: "Staking",         href: "/staking",   icon: "stake" },
+  { key: "docs",        label: "Docs",            href: "/docs",       icon: "doc" },
 ];
 
 export function LeftSidebar() {

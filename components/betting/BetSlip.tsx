@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useBetSlip, type BetPick } from "@/lib/store/betSlipStore";
 import { TEAM_NAMES } from "@/lib/data/teams";
 import { FlagRect } from "@/components/shared/FlagRect";
@@ -282,7 +283,7 @@ function SlipContent({
         </div>
 
         {/* Paul tag */}
-        <div className="flex items-center gap-3 rounded-lg border border-hair px-3 py-2 mb-5 bg-[rgba(139,71,214,0.08)]">
+        <div className="flex items-center gap-3 rounded-lg border border-hair px-3 py-2 mb-3 bg-[rgba(139,71,214,0.08)]">
           <Image
             src="/assets/chibi_cheerful.png"
             alt=""
@@ -291,12 +292,42 @@ function SlipContent({
             style={{ filter: "drop-shadow(0 2px 8px rgba(139,71,214,0.4))" }}
           />
           <div className="flex-1">
-            <div className="mono text-[11px] text-fifa-magenta">Paul's take</div>
+            <div className="mono text-[11px] text-fifa-magenta">Paul&apos;s take</div>
             <div className="text-xs text-t2">
               78% confidence on this line — following the market.
             </div>
           </div>
         </div>
+
+        {/* Top-up CTA — Transfer Window */}
+        <Link
+          href="/transfer"
+          onClick={onClose}
+          className="flex items-center justify-between gap-3 rounded-lg border border-[rgba(46,111,230,0.35)] px-3 py-2.5 mb-5 transition hover:bg-[rgba(46,111,230,0.14)]"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(46,111,230,0.15), rgba(46,111,230,0.04))",
+          }}
+        >
+          <div>
+            <div className="label" style={{ color: "var(--fifa-blue)" }}>
+              Need more USDC?
+            </div>
+            <div className="text-xs text-t2 mt-0.5">
+              Open the Transfer Window — bridge any chain, any token.
+            </div>
+          </div>
+          <span
+            className="label rounded-full px-2.5 py-1.5 text-nowrap"
+            style={{
+              background: "rgba(46,111,230,0.2)",
+              border: "1px solid rgba(46,111,230,0.45)",
+              color: "var(--fifa-blue)",
+            }}
+          >
+            Transfer →
+          </span>
+        </Link>
       </div>
 
       {/* Submit */}
