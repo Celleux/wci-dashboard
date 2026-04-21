@@ -8,7 +8,9 @@
     "start": "next start",
     "generate:icons": "node scripts/generate-icons.mjs",
     "generate:flags": "node scripts/extract-flags.mjs",
-    "v0:build": "tsx scripts/build-dashboard.ts"
+    "v0:build": "tsx scripts/build-dashboard.ts",
+    "v0:sync": "tsx scripts/v0-sync.ts",
+    "v0:verify": "tsx scripts/v0-verify-sync.ts"
   },
   "dependencies": {
     "@rainbow-me/rainbowkit": "^2.2.10",
