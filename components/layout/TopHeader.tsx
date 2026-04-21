@@ -72,9 +72,9 @@ export function TopHeader() {
         zIndex: 40,
         height: HEADER_H,
         flexShrink: 0,
-        // 3D pop: deep base shadow + inner top highlight
+        // 3D pop — stacked inner highlights + outer drop + base bar
         boxShadow:
-          "inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 28px -12px rgba(0,0,0,0.75), 0 2px 0 rgba(0,0,0,0.6)",
+          "inset 0 1px 0 rgba(255,255,255,0.18), inset 0 2px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.55), 0 10px 28px -12px rgba(0,0,0,0.75), 0 24px 44px -18px rgba(0,0,0,0.55), 0 2px 0 rgba(0,0,0,0.6)",
       }}
     >
       {/* Backdrop blur + glass */}
@@ -90,6 +90,9 @@ export function TopHeader() {
             "linear-gradient(180deg, rgba(26,16,48,0.70) 0%, rgba(10,6,21,0.55) 100%)",
         }}
       />
+
+      {/* Top sheen highlight — thin rainbow-white line for premium chrome */}
+      <span aria-hidden className="header-sheen" />
 
       {/* Notched edge + rainbow stroke */}
       <HeaderWave headerH={HEADER_H} notchR={NOTCH_R} />
@@ -121,12 +124,12 @@ export function TopHeader() {
           <Image
             src="/assets/logo.png"
             alt=""
-            width={36}
-            height={36}
+            width={52}
+            height={52}
             priority
             style={{
               filter:
-                "drop-shadow(0 2px 6px rgba(245,208,32,0.35))",
+                "drop-shadow(0 3px 10px rgba(245,208,32,0.45))",
             }}
           />
           <div
@@ -159,7 +162,7 @@ export function TopHeader() {
                 marginTop: 3,
               }}
             >
-              THE ORACLE · V2
+              PICKS FROM THE DEEP
             </span>
           </div>
         </Link>

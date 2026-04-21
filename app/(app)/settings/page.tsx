@@ -97,7 +97,8 @@ export default function SettingsPage() {
               type="text"
               value={handle}
               onChange={(e) => setHandle(e.target.value)}
-              className="mono w-full rounded-xl border border-hair-strong bg-[rgba(10,6,21,0.6)] p-3 mt-1 text-t1 outline-none focus:border-gold"
+              className="input-glass mt-1"
+              placeholder="yourname.eth"
             />
           </label>
           <label className="block">
@@ -107,7 +108,8 @@ export default function SettingsPage() {
               maxLength={3}
               value={country}
               onChange={(e) => setCountry(e.target.value.toUpperCase())}
-              className="mono w-full rounded-xl border border-hair-strong bg-[rgba(10,6,21,0.6)] p-3 mt-1 uppercase text-t1 outline-none focus:border-gold"
+              className="input-glass mt-1 uppercase"
+              placeholder="USA"
             />
           </label>
         </div>

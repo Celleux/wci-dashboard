@@ -63,12 +63,9 @@ export default function CopePage() {
           {FILTERS.map((f, i) => (
             <button
               key={f}
-              className="label px-3 py-2 rounded-lg border"
-              style={{
-                borderColor: i === 0 ? "rgba(245,208,32,0.35)" : "var(--hair)",
-                background: i === 0 ? "rgba(245,208,32,0.12)" : "transparent",
-                color: i === 0 ? "var(--gold)" : "var(--t2)",
-              }}
+              type="button"
+              className="tab-btn"
+              data-active={i === 0}
             >
               {f}
             </button>

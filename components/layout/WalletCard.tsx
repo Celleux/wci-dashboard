@@ -84,7 +84,7 @@ export function WalletCard({
           </svg>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 9, color: "var(--t3)" }}>WCI</div>
+          <div style={{ fontSize: 9, color: "var(--t3)" }}>$WCI26</div>
           <div
             className="mono"
             style={{

@@ -22,7 +22,7 @@ export async function TaxTicker() {
     { label: "Total routed", value: fmt(data.totalRouted || 247_830), color: "var(--fifa-lime)" },
     { label: "Live pools", value: fmt(1_247_830), color: "var(--fifa-magenta)" },
     { label: "Bets settled today", value: "2,847", color: "var(--fifa-orange)" },
-    { label: "WCI staked", value: "412,380", color: "var(--fifa-purple)" },
+    { label: "$WCI26 staked", value: "412,380", color: "var(--fifa-purple)" },
     { label: "Paul's ROI", value: "+76%", color: "var(--fifa-lime)" },
     { label: "Cope cards minted", value: "1,284", color: "var(--coral)" },
   ];

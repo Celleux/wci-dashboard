@@ -22,7 +22,7 @@ export default function LeaderboardPage() {
               Leaderboard
             </h1>
             <p className="text-t2 mt-2 max-w-xl">
-              Top 100 WCI stakers split the 3% rewards pool each week.
+              Top 100 $WCI26 stakers split the 3% rewards pool each week.
               Grudge points pile up when you bet against Paul and he's right.
               Climb one, dodge the other.
             </p>
@@ -41,12 +41,9 @@ export default function LeaderboardPage() {
         {TABS.map((t, i) => (
           <button
             key={t}
-            className="label px-4 py-2 rounded-lg border"
-            style={{
-              borderColor: i === 0 ? "rgba(245,208,32,0.4)" : "var(--hair)",
-              background: i === 0 ? "rgba(245,208,32,0.12)" : "transparent",
-              color: i === 0 ? "var(--gold)" : "var(--t2)",
-            }}
+            type="button"
+            className="tab-btn"
+            data-active={i === 0}
           >
             {t}
           </button>

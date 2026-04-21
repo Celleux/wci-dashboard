@@ -115,13 +115,13 @@ export function InstallPrompt() {
         ×
       </button>
       <div className="label mb-1" style={{ color: "var(--gold)" }}>
-        Install WCI
+        Install WCI26
       </div>
       <h3 className="display text-base mb-1">Keep Paul in your pocket</h3>
       <p className="text-t2 text-xs mb-3 pr-8">
         {variant === "ios"
           ? "Tap share \u2197 in Safari, then \u201cAdd to Home Screen\u201d."
-          : "One tap installs WCI as a standalone app with offline support."}
+          : "One tap installs WCI26 as a standalone app with offline support."}
       </p>
       <div className="flex gap-2 justify-end">
         <button

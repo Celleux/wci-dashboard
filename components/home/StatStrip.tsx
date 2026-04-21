@@ -28,7 +28,7 @@ const TILES: Tile[] = [
     positive: true,
   },
   {
-    label: "WCI staked",
+    label: "$WCI26 staked",
     value: "412,380",
     sub: "Paul's Pocket · 100K+",
     accent: "var(--fifa-magenta)",

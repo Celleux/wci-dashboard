@@ -34,7 +34,7 @@ export function LeftSidebar() {
         background:
           "linear-gradient(180deg, rgba(26,18,52,0.85), rgba(10,6,21,0.95))",
         boxShadow:
-          "inset -1px 0 0 rgba(245,208,32,0.08), 2px 0 20px -4px rgba(0,0,0,0.6)",
+          "inset 1px 0 0 rgba(255,255,255,0.06), inset 0 1px 0 rgba(255,255,255,0.10), inset -1px 0 0 rgba(245,208,32,0.12), 2px 0 20px -4px rgba(0,0,0,0.6), 6px 0 28px -16px rgba(245,208,32,0.18)",
         flexShrink: 0,
         overflow: "hidden",
       }}

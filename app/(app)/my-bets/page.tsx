@@ -65,19 +65,16 @@ export default function MyBetsPage() {
         {TABS.map((t, i) => (
           <button
             key={t}
-            className="label px-3 py-2 rounded-lg border"
-            style={{
-              borderColor: i === 0 ? "rgba(245,208,32,0.35)" : "var(--hair)",
-              background: i === 0 ? "rgba(245,208,32,0.12)" : "transparent",
-              color: i === 0 ? "var(--gold)" : "var(--t2)",
-            }}
+            type="button"
+            className="tab-btn"
+            data-active={i === 0}
           >
             {t}
           </button>
         ))}
         <button
           type="button"
-          className="label ml-auto px-3 py-2 rounded-lg border border-hair text-t2 hover:bg-white/5"
+          className="tab-btn ml-auto"
         >
           Export CSV
         </button>
@@ -106,8 +103,13 @@ export default function MyBetsPage() {
           <Chip kind="live">{live.length} live</Chip>
         </header>
         <div className="grid gap-3">
-          {live.map((m) => (
-            <AccentCard key={m.id} accent="var(--fifa-red)" className="p-4">
+          {live.map((m, i) => (
+            <AccentCard
+              key={m.id}
+              accent="var(--fifa-red)"
+              className="p-4 card-appear"
+              style={{ animationDelay: `${i * 70}ms` } as React.CSSProperties}
+            >
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-2">
                   <FlagRect code={m.teams[0]} width={26} height={17} />
@@ -151,8 +153,13 @@ export default function MyBetsPage() {
           <Chip>Pre-kickoff</Chip>
         </header>
         <div className="grid gap-3">
-          {pending.map((m) => (
-            <AccentCard key={m.id} accent="var(--fifa-teal)" className="p-4">
+          {pending.map((m, i) => (
+            <AccentCard
+              key={m.id}
+              accent="var(--fifa-teal)"
+              className="p-4 card-appear"
+              style={{ animationDelay: `${i * 70}ms` } as React.CSSProperties}
+            >
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-2">
                   <FlagRect code={m.teams[0]} width={26} height={17} />
@@ -187,11 +194,15 @@ export default function MyBetsPage() {
           <Chip>14 won · 9 lost</Chip>
         </header>
         <div className="grid gap-3">
-          {settled.map((m) => (
+          {settled.map((m, i) => (
             <AccentCard
               key={m.id}
               accent={m.result === "W" ? "var(--fifa-lime)" : "var(--coral)"}
-              className="p-4"
+              className={cn(
+                "p-4 card-appear",
+                m.result === "W" ? "win-pulse" : "loss-dim"
+              )}
+              style={{ animationDelay: `${i * 70}ms` } as React.CSSProperties}
             >
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-2">

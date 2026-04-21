@@ -26,19 +26,19 @@ export default function StakingPage() {
         <div className="grid items-center gap-6 md:grid-cols-[auto_1fr]">
           <ChibiImage src="/assets/chibi_galaxy.png" size={190} glow="rgba(159,214,52,0.55)" />
           <div>
-            <Chip kind="gold">You hold 312,000 WCI</Chip>
+            <Chip kind="gold">You hold 312,000 $WCI26</Chip>
             <h1 className="display text-4xl md:text-5xl mt-2 leading-none">
               Paul's Pocket
             </h1>
             <p className="text-t2 mt-2 max-w-xl">
-              Hold 100,000 WCI or more and every winning bet gets a <strong>2×
+              Hold 100,000 $WCI26 or more and every winning bet gets a <strong>2×
               multiplier</strong>, you qualify for the weekly Merkle rewards drop,
               and Paul auto-follows you on his signed on-chain picks at T−60.
             </p>
             <div className="mt-4">
               <ConfidenceBar
                 value={pct}
-                label={`Threshold · 100K WCI (${wci.toLocaleString()} held)`}
+                label={`Threshold · 100K $WCI26 (${wci.toLocaleString()} held)`}
                 accent="var(--fifa-lime)"
               />
             </div>

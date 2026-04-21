@@ -46,12 +46,9 @@ export default function MatchesPage() {
         {FILTERS.map((f, i) => (
           <button
             key={f.key}
-            className="label px-3 py-2 rounded-lg border"
-            style={{
-              borderColor: i === 0 ? "rgba(245,208,32,0.35)" : "var(--hair)",
-              background: i === 0 ? "rgba(245,208,32,0.12)" : "transparent",
-              color: i === 0 ? "var(--gold)" : "var(--t2)",
-            }}
+            type="button"
+            className="tab-btn"
+            data-active={i === 0}
           >
             {f.label}
           </button>
@@ -60,12 +57,10 @@ export default function MatchesPage() {
         {MDS.map((m, i) => (
           <button
             key={m}
-            className="label px-3 py-2 rounded-lg border"
-            style={{
-              borderColor: i === 1 ? "rgba(0,185,178,0.4)" : "var(--hair)",
-              background: i === 1 ? "rgba(0,185,178,0.1)" : "transparent",
-              color: i === 1 ? "var(--fifa-teal)" : "var(--t2)",
-            }}
+            type="button"
+            className="tab-btn"
+            data-tone="teal"
+            data-active={i === 1}
           >
             {m}
           </button>

@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "WCI",
+    title: "WCI26",
     statusBarStyle: "black-translucent",
   },
   formatDetection: {

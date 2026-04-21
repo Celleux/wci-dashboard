@@ -14,7 +14,7 @@ const Q: { q: string; a: string; accent: string }[] = [
   {
     q: "What is the 3/3 tax?",
     a:
-      "Every buy or sell of $WCI on Uniswap routes 3% to a rewards pool and 3% to an ecosystem treasury. Wallet-to-wallet transfers are untaxed. The rewards pool is swapped to WETH every Sunday and dropped to 100K+ holders via Merkle.",
+      "Every buy or sell of $WCI26 on Uniswap routes 3% to a rewards pool and 3% to an ecosystem treasury. Wallet-to-wallet transfers are untaxed. The rewards pool is swapped to WETH every Sunday and dropped to 100K+ holders via Merkle.",
     accent: "var(--gold)",
   },
   {
@@ -30,9 +30,9 @@ const Q: { q: string; a: string; accent: string }[] = [
     accent: "var(--fifa-orange)",
   },
   {
-    q: "Paul's Pocket · what does 100K WCI get me?",
+    q: "Paul's Pocket · what does 100K $WCI26 get me?",
     a:
-      "Holding 100K WCI (float-priced, ≈$500 at launch) turns on a 2× winnings multiplier (paid from non-holders), weekly Merkle rewards, and auto-follow of Paul's picks at T−60.",
+      "Holding 100K $WCI26 (float-priced, ≈$500 at launch) turns on a 2× winnings multiplier (paid from non-holders), weekly Merkle rewards, and auto-follow of Paul's picks at T−60.",
     accent: "var(--fifa-lime)",
   },
   {

@@ -7,7 +7,9 @@ import { readFileSync } from "node:fs";
 async function main() {
   const v0 = createClient({ apiKey: process.env.V0_API_KEY! });
   const state = JSON.parse(readFileSync(".v0-state.json", "utf8"));
-  const which = (process.argv[2] ?? "B").toUpperCase();
+  const raw = process.argv[2] ?? "B";
+  // Sync chat key is stored lowercase; seed chat keys A/B/C uppercase. Try exact, then uppercase.
+  const which = state.chats[raw]?.chatId ? raw : raw.toUpperCase();
   const chatId = state.chats[which]?.chatId;
   if (!chatId) {
     console.error(`No chatId for ${which}`);
