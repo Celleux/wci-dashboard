@@ -8,7 +8,8 @@ import {
   RainbowKitProvider,
   darkTheme,
 } from "@rainbow-me/rainbowkit";
-import "@rainbow-me/rainbowkit/styles.css";
+// RainbowKit CSS is imported from app/layout.tsx so v0's preview bundler
+// resolves it from the root (avoids "failed to load from /components/..." error).
 import { wagmiConfig } from "@/lib/web3/wagmi-config";
 
 export function Web3Provider({ children }: { children: ReactNode }) {

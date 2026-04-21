@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+// RainbowKit stylesheet — imported from the root so bundlers (Vercel and v0)
+// resolve the node_modules path consistently.
+import "@rainbow-me/rainbowkit/styles.css";
 import { OfflineBanner } from "@/components/pwa/OfflineBanner";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { Web3ProviderClient } from "@/components/providers/Web3ProviderClient";
