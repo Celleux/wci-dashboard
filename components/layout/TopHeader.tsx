@@ -8,7 +8,8 @@ import { HeaderWave } from "./HeaderWave";
 import { WalletBadgeClient as WalletBadge } from "./WalletBadgeClient";
 
 const HEADER_H = 88;
-const ORB_SIZE = 132; // bigger than header so it protrudes up + down through notch
+const ORB_SIZE = 156; // bigger than header so it protrudes up + down through notch
+const NOTCH_R = 96;   // half-width of the cut; tuned so the orb clears 2px
 
 interface HeaderNavLink {
   label: string;
@@ -91,7 +92,7 @@ export function TopHeader() {
       />
 
       {/* Notched edge + rainbow stroke */}
-      <HeaderWave headerH={HEADER_H} notchR={70} />
+      <HeaderWave headerH={HEADER_H} notchR={NOTCH_R} />
 
       {/* Tabs + wordmark + wallet (row) */}
       <div
@@ -207,12 +208,14 @@ export function TopHeader() {
         </div>
       </div>
 
-      {/* Orb — absolutely centered over the notch, half above + half into header */}
+      {/* Orb — absolutely centered over the notch, lifted to protrude about
+          25% above the header line so it reads as a 3D lens embedded in the
+          bar rather than floating. */}
       <div
         style={{
           position: "absolute",
           left: "50%",
-          top: -ORB_SIZE * 0.22,
+          top: -ORB_SIZE * 0.28,
           transform: "translateX(-50%)",
           zIndex: 45,
           pointerEvents: "none",

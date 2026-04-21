@@ -5,21 +5,21 @@ interface Props {
   src: string;
   alt?: string;
   size?: number;
-  glow?: string; // CSS color
+  glow?: string;
   className?: string;
   priority?: boolean;
 }
 
 /**
- * ChibiImage — Paul PNG with a soft radial glow halo behind it so the white/
- * cutout edges blend into the dark background instead of popping out flat.
- * Use this wrapper any time we render a chibi asset.
+ * ChibiImage — Paul PNG with a multi-layer halo so the cutout edge blends
+ * seamlessly into dark backgrounds. Two concentric glow layers (tight +
+ * wide) + a subtle darken behind the feet to ground the character.
  */
 export function ChibiImage({
   src,
   alt = "",
   size = 160,
-  glow = "rgba(139,71,214,0.45)",
+  glow = "rgba(139,71,214,0.5)",
   className,
   priority,
 }: Props) {
@@ -28,16 +28,45 @@ export function ChibiImage({
       className={cn("relative inline-block align-middle", className)}
       style={{ width: size, height: size }}
     >
-      {/* Soft glow halo behind */}
+      {/* Wide soft glow backplate */}
       <span
         aria-hidden
         style={{
           position: "absolute",
-          inset: "10%",
+          inset: "-12%",
           borderRadius: "50%",
-          background: `radial-gradient(circle at 50% 55%, ${glow}, transparent 68%)`,
-          filter: "blur(24px)",
+          background: `radial-gradient(circle at 50% 50%, ${glow}, transparent 72%)`,
+          filter: "blur(32px)",
           opacity: 0.95,
+          pointerEvents: "none",
+        }}
+      />
+      {/* Tight core glow */}
+      <span
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: "5%",
+          borderRadius: "50%",
+          background: `radial-gradient(circle at 50% 55%, ${glow}, transparent 55%)`,
+          filter: "blur(14px)",
+          opacity: 0.7,
+          pointerEvents: "none",
+        }}
+      />
+      {/* Ground shadow under feet */}
+      <span
+        aria-hidden
+        style={{
+          position: "absolute",
+          left: "15%",
+          right: "15%",
+          bottom: "3%",
+          height: "14%",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(ellipse at center, rgba(0,0,0,0.55), transparent 70%)",
+          filter: "blur(6px)",
           pointerEvents: "none",
         }}
       />
@@ -54,7 +83,7 @@ export function ChibiImage({
           height: "100%",
           objectFit: "contain",
           filter:
-            "drop-shadow(0 14px 28px rgba(0,0,0,0.65)) drop-shadow(0 0 22px rgba(10,6,21,0.9))",
+            "drop-shadow(0 12px 24px rgba(0,0,0,0.5)) drop-shadow(0 0 14px rgba(10,6,21,0.9))",
         }}
       />
     </span>
