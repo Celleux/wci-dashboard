@@ -28,61 +28,52 @@ function MatchRow({ m }: { m: MockMatch }) {
   const live = typeof m.minute === "number";
 
   return (
-    <div
-      className="grid items-center gap-3 rounded-xl border border-hair bg-[rgba(20,16,40,0.45)] px-3 py-3 hover:border-hair-strong transition-colors"
-      style={{
-        gridTemplateColumns: "auto minmax(0,1fr) auto auto auto",
-      }}
-    >
-      {group && <GroupTile group={group} size={28} />}
-
-      <div className="min-w-0">
-        <div className="flex items-center gap-2">
-          <FlagRect code={home} width={22} height={14} />
+    <div className="rounded-xl border border-hair bg-[rgba(20,16,40,0.45)] hover:border-hair-strong transition-colors">
+      {/* Row 1 — group + teams + status */}
+      <div className="flex items-center gap-2 px-3 py-2.5 md:px-3.5">
+        {group && <GroupTile group={group} size={26} />}
+        <div className="flex items-center gap-1.5 min-w-0 flex-1">
+          <FlagRect code={home} width={20} height={13} />
           <span className="display text-sm">{home}</span>
           <span className="text-t4 text-xs">vs</span>
-          <FlagRect code={away} width={22} height={14} />
+          <FlagRect code={away} width={20} height={13} />
           <span className="display text-sm">{away}</span>
         </div>
-        <div className="mono text-[11px] text-t3 truncate">
-          {TEAM_NAMES[home]} · {TEAM_NAMES[away]} · {m.venue}
+        {live ? (
+          <Chip kind="live">LIVE · {m.minute}&apos;</Chip>
+        ) : m.kickoff ? (
+          <Chip kind="gold">
+            <Countdown target={m.kickoff} compact />
+          </Chip>
+        ) : (
+          <Chip>FT</Chip>
+        )}
+      </div>
+
+      {/* Row 2 — pool bar + tri-odds — grid on desktop, stacked on mobile */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 px-3 pb-2.5 md:px-3.5">
+        <PoolBar pool={pool} barOnly className="flex-1 min-w-0" />
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <span
+            className="mono text-[11px] tabular-nums px-2 py-1 rounded font-bold"
+            style={{ color: "var(--fifa-teal)", background: "rgba(0,185,178,0.12)" }}
+          >
+            {Number.isFinite(odds.home) ? odds.home.toFixed(2) : "—"}
+          </span>
+          <span
+            className="mono text-[11px] tabular-nums px-2 py-1 rounded font-bold"
+            style={{ color: "var(--t3)", background: "rgba(128,121,168,0.12)" }}
+          >
+            {Number.isFinite(odds.draw) ? odds.draw.toFixed(2) : "—"}
+          </span>
+          <span
+            className="mono text-[11px] tabular-nums px-2 py-1 rounded font-bold"
+            style={{ color: "var(--fifa-orange)", background: "rgba(255,122,31,0.12)" }}
+          >
+            {Number.isFinite(odds.away) ? odds.away.toFixed(2) : "—"}
+          </span>
         </div>
       </div>
-
-      <div className="w-40">
-        <PoolBar pool={pool} barOnly />
-      </div>
-
-      <div className="flex items-center gap-1.5">
-        <span
-          className="mono text-xs tabular-nums px-2 py-1 rounded"
-          style={{ color: "var(--fifa-teal)", background: "rgba(0,185,178,0.1)" }}
-        >
-          {Number.isFinite(odds.home) ? odds.home.toFixed(2) : "—"}
-        </span>
-        <span
-          className="mono text-xs tabular-nums px-2 py-1 rounded"
-          style={{ color: "var(--t3)", background: "rgba(128,121,168,0.1)" }}
-        >
-          {Number.isFinite(odds.draw) ? odds.draw.toFixed(2) : "—"}
-        </span>
-        <span
-          className="mono text-xs tabular-nums px-2 py-1 rounded"
-          style={{ color: "var(--fifa-orange)", background: "rgba(255,122,31,0.1)" }}
-        >
-          {Number.isFinite(odds.away) ? odds.away.toFixed(2) : "—"}
-        </span>
-      </div>
-
-      {live ? (
-        <Chip kind="live">LIVE · {m.minute}&apos;</Chip>
-      ) : m.kickoff ? (
-        <Chip kind="gold">
-          <Countdown target={m.kickoff} compact />
-        </Chip>
-      ) : (
-        <Chip>FT</Chip>
-      )}
     </div>
   );
 }
@@ -92,8 +83,8 @@ export function MatchesList() {
   const rows = TAB_DATA[tab];
 
   return (
-    <AccentCard accent="var(--fifa-teal)" className="p-5">
-      <header className="mb-3 flex flex-wrap items-center justify-between gap-3">
+    <AccentCard accent="var(--fifa-teal)" className="p-3 sm:p-5">
+      <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="card-title">Matches</h2>
         <div className="flex rounded-lg border border-hair bg-[rgba(10,6,21,0.6)] p-0.5">
           {(

@@ -77,35 +77,67 @@ export function InstallPrompt() {
       role="dialog"
       aria-label="Install World Cup Inu"
       className={cn(
-        "fixed left-1/2 z-50 w-[min(400px,calc(100vw-24px))] -translate-x-1/2 rounded-2xl p-4 shadow-2xl",
-        "bottom-[calc(82px+var(--sa-bottom))] md:bottom-6"
+        "fixed left-1/2 z-50 w-[min(380px,calc(100vw-16px))] -translate-x-1/2 rounded-2xl p-3.5 shadow-2xl",
+        // Sit above the 64px mobile bottom tab bar + safe-area; pin to bottom-right on desktop
+        "bottom-[calc(76px+var(--sa-bottom,0px))] md:bottom-5 md:left-auto md:right-5 md:translate-x-0"
       )}
       style={{
         background:
-          "linear-gradient(180deg, rgba(41,31,82,0.95), rgba(20,16,40,0.95))",
+          "linear-gradient(180deg, rgba(41,31,82,0.96), rgba(20,16,40,0.96))",
         border: "1px solid var(--hair-strong)",
         backdropFilter: "blur(18px)",
+        boxShadow: "0 18px 40px -12px rgba(0,0,0,0.7), 0 0 22px -6px var(--fifa-purple)",
       }}
     >
-      <div className="label mb-1">Install WCI</div>
-      <h3 className="display text-base mb-1">
-        Keep Paul in your pocket
-      </h3>
-      <p className="text-t2 text-sm mb-3">
+      <button
+        type="button"
+        onClick={dismiss}
+        aria-label="Close"
+        style={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          width: 28,
+          height: 28,
+          borderRadius: 999,
+          background: "rgba(255,255,255,0.06)",
+          border: "1px solid var(--hair)",
+          color: "var(--t3)",
+          fontSize: 14,
+          cursor: "pointer",
+          lineHeight: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 0,
+        }}
+      >
+        ×
+      </button>
+      <div className="label mb-1" style={{ color: "var(--gold)" }}>
+        Install WCI
+      </div>
+      <h3 className="display text-base mb-1">Keep Paul in your pocket</h3>
+      <p className="text-t2 text-xs mb-3 pr-8">
         {variant === "ios"
-          ? "Tap the share icon in Safari, then choose \u201cAdd to Home Screen\u201d."
+          ? "Tap share \u2197 in Safari, then \u201cAdd to Home Screen\u201d."
           : "One tap installs WCI as a standalone app with offline support."}
       </p>
       <div className="flex gap-2 justify-end">
         <button
           type="button"
           onClick={dismiss}
-          className="label px-3 py-2 rounded-lg hover:bg-[rgba(255,255,255,0.04)]"
+          className="label px-3 py-2 rounded-lg text-t3 hover:bg-[rgba(255,255,255,0.04)]"
         >
-          Maybe later
+          Later
         </button>
         {variant === "android" && (
-          <button type="button" className="btn-3d" onClick={install}>
+          <button
+            type="button"
+            className="btn-3d"
+            style={{ padding: "8px 14px", minHeight: 36, fontSize: 11 }}
+            onClick={install}
+          >
             Install
           </button>
         )}

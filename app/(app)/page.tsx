@@ -17,7 +17,7 @@ export default function Scoreboard() {
     <div className="flex flex-col gap-4 md:gap-6">
       {/* Hero row */}
       <section className="grid gap-4 lg:grid-cols-2 lg:gap-6">
-        <PaulHeroCard paulSize={560} />
+        <PaulHeroCard />
         <NextMatchCard
           onPickOutcome={(side) => {
             const labels = { home: "USA", draw: "DRAW", away: "TUR" };

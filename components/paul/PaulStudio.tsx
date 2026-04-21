@@ -13,9 +13,13 @@ import { useReducedMotion } from "framer-motion";
 export type PaulMood = "idle" | "focus" | "wink";
 
 interface PaulStudioProps {
+  /** Fallback px size for the SVG. When `responsive`, the SVG fills its container. */
   size?: number;
   mood?: PaulMood;
   lookAt?: { x: number; y: number };
+  /** If true, render as `width: 100%; height: auto` so the SVG scales to its
+   *  parent. Falls back to `size` for aspect math. */
+  responsive?: boolean;
 }
 
 const BALL_CFG = [
@@ -175,6 +179,7 @@ export function PaulStudio({
   size = 460,
   mood = "idle",
   lookAt = { x: 0, y: 0 },
+  responsive = false,
 }: PaulStudioProps) {
   const reduce = useReducedMotion();
   const [t, setT] = useState(0);
@@ -242,9 +247,15 @@ export function PaulStudio({
   return (
     <svg
       viewBox="0 0 520 620"
-      width={size}
-      height={(size * 620) / 520}
-      style={{ overflow: "visible" }}
+      width={responsive ? "100%" : size}
+      height={responsive ? "auto" : (size * 620) / 520}
+      preserveAspectRatio="xMidYMid meet"
+      style={{
+        overflow: "visible",
+        maxWidth: "100%",
+        maxHeight: "100%",
+        display: "block",
+      }}
       aria-hidden
     >
       <defs>
