@@ -9,58 +9,60 @@ import { BetSlip } from "@/components/betting/BetSlip";
 import { WhaleBar } from "@/components/home/WhaleBar";
 
 /**
- * AppShell — responsive full-bleed layout.
+ * AppShell — full-bleed responsive layout.
  *
- * Mobile (< md): MobileHeader + content + BottomTabBar, safe-area aware.
- * Desktop (>= md): TopHeader + LeftSidebar(260) + content + peek tentacle.
- *
- * Content is FULL-BLEED — no max-width wrapper. The PeekTentacle hangs from
- * the right edge so the glowing ring sticks out without a visible scroll gap.
+ * The document itself scrolls (body scroll). The sidebar is sticky, the header
+ * is sticky, and the peek tentacle is fixed to the viewport. No nested scroll
+ * container — this guarantees the page scrolls all the way to the bottom.
  */
 export function AppShell({ children }: { children: ReactNode }) {
   return (
-    <div className="relative flex min-h-screen w-full flex-col">
-      {/* Mobile header */}
-      <div className="md:hidden">
+    <>
+      {/* Mobile header (< md) */}
+      <div className="md:hidden sticky top-0 z-40">
         <MobileHeader />
       </div>
-      {/* Desktop header */}
-      <div className="hidden md:block">
+
+      {/* Desktop header (>= md) */}
+      <div className="hidden md:block sticky top-0 z-40">
         <TopHeader />
       </div>
 
-      {/* Tax ticker + whale feed */}
-      <TaxTicker />
-      <WhaleBar />
+      {/* Tax ticker + whale feed — sticky under the header on desktop */}
+      <div className="sticky top-[88px] z-30 hidden md:block">
+        <TaxTicker />
+        <WhaleBar />
+      </div>
+      <div className="md:hidden">
+        <TaxTicker />
+        <WhaleBar />
+      </div>
 
-      <div className="relative flex flex-1 min-h-0">
-        {/* Desktop sidebar */}
-        <div className="hidden md:flex">
+      {/* Body: sticky sidebar + naturally-scrolling main */}
+      <div className="flex w-full">
+        <aside className="hidden md:block sticky top-[156px] self-start h-[calc(100vh-156px)] z-20">
           <LeftSidebar />
-        </div>
+        </aside>
 
-        {/* Main content fills the rest of the viewport. No max-width. */}
         <main
           role="main"
           id="main"
-          className="main-scroll relative flex-1 min-w-0 overflow-y-auto pb-[calc(72px+var(--sa-bottom))] md:pb-10"
+          className="flex-1 min-w-0 px-4 pt-4 pb-[calc(88px+var(--sa-bottom))] md:px-8 md:pt-6 md:pb-16 md:pr-[112px] xl:pr-[128px]"
         >
-          <div className="w-full px-4 pt-4 pb-10 md:px-8 md:pt-6 md:pr-[96px] xl:pr-[112px]">
-            {children}
-          </div>
+          {children}
         </main>
-
-        {/* Desktop peek tentacle — fixed to the right edge */}
-        <PeekTentacle />
       </div>
+
+      {/* Desktop peek tentacle — fixed to right edge */}
+      <PeekTentacle />
 
       {/* Mobile bottom tab bar */}
       <div className="md:hidden">
         <BottomTabBar />
       </div>
 
-      {/* Global BetSlip drawer (md right-side) / bottom sheet (< md) */}
+      {/* Global BetSlip drawer */}
       <BetSlip />
-    </div>
+    </>
   );
 }

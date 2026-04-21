@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { ChibiImage } from "@/components/shared/ChibiImage";
 import { AccentCard } from "@/components/shared/AccentCard";
 import { Chip } from "@/components/shared/Chip";
 import { ConfidenceBar } from "@/components/shared/ConfidenceBar";
@@ -24,16 +24,7 @@ export default function StakingPage() {
       {/* Hero */}
       <AccentCard accent="var(--fifa-lime)" className="p-6 overflow-visible">
         <div className="grid items-center gap-6 md:grid-cols-[auto_1fr]">
-          <Image
-            src="/assets/chibi_galaxy.png"
-            alt=""
-            width={180}
-            height={180}
-            style={{
-              filter:
-                "drop-shadow(0 18px 40px rgba(0,0,0,0.6)) drop-shadow(0 0 34px rgba(159,214,52,0.45))",
-            }}
-          />
+          <ChibiImage src="/assets/chibi_galaxy.png" size={190} glow="rgba(159,214,52,0.55)" />
           <div>
             <Chip kind="gold">You hold 312,000 WCI</Chip>
             <h1 className="display text-4xl md:text-5xl mt-2 leading-none">

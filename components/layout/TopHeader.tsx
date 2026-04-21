@@ -71,17 +71,22 @@ export function TopHeader() {
         zIndex: 40,
         height: HEADER_H,
         flexShrink: 0,
+        // 3D pop: deep base shadow + inner top highlight
+        boxShadow:
+          "inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 28px -12px rgba(0,0,0,0.75), 0 2px 0 rgba(0,0,0,0.6)",
       }}
     >
-      {/* Backdrop blur */}
+      {/* Backdrop blur + glass */}
       <div
         aria-hidden
         style={{
           position: "absolute",
           inset: 0,
           height: HEADER_H,
-          backdropFilter: "blur(20px) saturate(140%)",
-          WebkitBackdropFilter: "blur(20px) saturate(140%)",
+          backdropFilter: "blur(24px) saturate(160%)",
+          WebkitBackdropFilter: "blur(24px) saturate(160%)",
+          background:
+            "linear-gradient(180deg, rgba(26,16,48,0.70) 0%, rgba(10,6,21,0.55) 100%)",
         }}
       />
 

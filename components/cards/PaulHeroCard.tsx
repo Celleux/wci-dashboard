@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { Chip } from "@/components/shared/Chip";
 import { FlagRect } from "@/components/shared/FlagRect";
+import { PaulStudio, type PaulMood } from "@/components/paul/PaulStudio";
 
 interface PaulHeroCardProps {
   reaching?: boolean;
@@ -11,26 +12,65 @@ interface PaulHeroCardProps {
 }
 
 /**
- * Hero card — PAUL wordmark + stats on the LEFT, chibi character BIG on the
- * RIGHT overflowing the card (overflow: visible). Animated conic halo behind
- * Paul. Bottom row has 3 stat pills (streak / top% / followers).
+ * Hero card — PAUL wordmark + stats on the LEFT, the animated SVG rig
+ * PaulStudio on the RIGHT (overflowing the card bounds for a sticker feel).
+ * Background features the official FIFA26 rainbow-arc pattern behind Paul,
+ * masked and muted so it reinforces the brand without overpowering.
+ *
+ * Cursor look-at tracking + periodic wink animation handled here so the
+ * mouse-position lookup stays close to the DOM.
  */
-export function PaulHeroCard({ paulSize = 460 }: PaulHeroCardProps) {
+export function PaulHeroCard({ paulSize = 440 }: PaulHeroCardProps) {
   const reduce = useReducedMotion();
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [mood, setMood] = useState<PaulMood>("idle");
+  const [lookAt, setLookAt] = useState({ x: 0, y: 0 });
+
+  // Cursor look-at
+  useEffect(() => {
+    if (reduce) return;
+    const onMove = (e: MouseEvent) => {
+      const el = wrapperRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      setLookAt({
+        x: Math.max(-1, Math.min(1, (e.clientX - cx) / (r.width / 2))),
+        y: Math.max(-1, Math.min(1, (e.clientY - cy) / (r.height / 2))),
+      });
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, [reduce]);
+
+  // Periodic wink → focus → wink cycle
+  useEffect(() => {
+    if (reduce) return;
+    let t: ReturnType<typeof setTimeout>;
+    const cycle = () => {
+      setMood("focus");
+      setTimeout(() => setMood("idle"), 460);
+      t = setTimeout(cycle, 4500 + Math.random() * 2200);
+    };
+    t = setTimeout(cycle, 2500);
+    return () => clearTimeout(t);
+  }, [reduce]);
 
   return (
     <div
+      ref={wrapperRef}
       className="card relative"
       style={{
         "--card-accent": "var(--fifa-purple)",
-        minHeight: 440,
+        minHeight: 500,
         padding: 0,
         overflow: "visible",
       } as React.CSSProperties}
     >
       <div className="card-accent-bar" aria-hidden />
 
-      {/* Gradient background panel */}
+      {/* Base gradient */}
       <div
         aria-hidden
         style={{
@@ -39,7 +79,29 @@ export function PaulHeroCard({ paulSize = 460 }: PaulHeroCardProps) {
           borderRadius: 22,
           overflow: "hidden",
           background:
-            "linear-gradient(180deg, rgba(139,71,214,0.25) 0%, rgba(41,31,82,0.5) 45%, rgba(20,16,40,0.95) 100%)",
+            "linear-gradient(180deg, rgba(139,71,214,0.30) 0%, rgba(41,31,82,0.5) 45%, rgba(20,16,40,0.96) 100%)",
+        }}
+      />
+
+      {/* FIFA26 arc pattern — the official rainbow pattern from the brand */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          borderRadius: 22,
+          overflow: "hidden",
+          backgroundImage: "url('/assets/pattern.jpg')",
+          backgroundSize: "170% auto",
+          backgroundPosition: "65% 35%",
+          backgroundRepeat: "no-repeat",
+          filter: "saturate(1.15) contrast(1.05)",
+          opacity: 0.35,
+          mixBlendMode: "screen",
+          maskImage:
+            "radial-gradient(ellipse at 68% 55%, black 10%, rgba(0,0,0,0.5) 45%, transparent 80%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at 68% 55%, black 10%, rgba(0,0,0,0.5) 45%, transparent 80%)",
         }}
       />
 
@@ -48,14 +110,14 @@ export function PaulHeroCard({ paulSize = 460 }: PaulHeroCardProps) {
         aria-hidden
         style={{
           position: "absolute",
-          right: "-10%",
-          top: "8%",
-          bottom: "-10%",
-          width: "70%",
+          right: "-12%",
+          top: "10%",
+          bottom: "-12%",
+          width: "75%",
           background:
             "conic-gradient(from 0deg, var(--fifa-red), var(--fifa-yellow), var(--fifa-teal), var(--fifa-purple), var(--fifa-magenta), var(--fifa-red))",
-          opacity: 0.18,
-          filter: "blur(55px)",
+          opacity: 0.22,
+          filter: "blur(60px)",
           borderRadius: "50%",
           pointerEvents: "none",
         }}
@@ -63,20 +125,19 @@ export function PaulHeroCard({ paulSize = 460 }: PaulHeroCardProps) {
         transition={reduce ? {} : { duration: 30, repeat: Infinity, ease: "linear" }}
       />
 
-      {/* Left column — PAUL + stats + chips */}
+      {/* Left: text column */}
       <div
         style={{
           position: "absolute",
           top: 22,
           left: 24,
           zIndex: 4,
-          maxWidth: "58%",
+          maxWidth: "50%",
           display: "flex",
           flexDirection: "column",
           gap: 10,
         }}
       >
-        {/* Live badge */}
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span
             aria-hidden
@@ -94,44 +155,35 @@ export function PaulHeroCard({ paulSize = 460 }: PaulHeroCardProps) {
           </span>
         </div>
 
-        {/* PAUL wordmark */}
         <div
           className="display"
           style={{
-            fontSize: "clamp(54px, 9vw, 84px)",
+            fontSize: "clamp(54px, 8.5vw, 88px)",
             lineHeight: 0.88,
             letterSpacing: "-0.04em",
-            background: "linear-gradient(180deg, #FFF5AE 0%, var(--gold) 50%, #A88900 100%)",
+            background:
+              "linear-gradient(180deg, #FFF5AE 0%, var(--gold) 55%, #A88900 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
-            textShadow: "0 2px 20px rgba(245,208,32,0.25)",
+            textShadow: "0 2px 20px rgba(245,208,32,0.28)",
             margin: 0,
           }}
         >
           PAUL
         </div>
 
-        {/* W / L / ROI */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          <span className="mono" style={{ color: "var(--fifa-lime)", fontWeight: 700, fontSize: 13 }}>
-            38W
-          </span>
+          <span className="mono" style={{ color: "var(--fifa-lime)", fontWeight: 700, fontSize: 13 }}>38W</span>
           <span style={{ color: "var(--t4)" }}>·</span>
-          <span className="mono" style={{ color: "var(--coral)", fontWeight: 700, fontSize: 13 }}>
-            12L
-          </span>
+          <span className="mono" style={{ color: "var(--coral)", fontWeight: 700, fontSize: 13 }}>12L</span>
           <span style={{ color: "var(--t4)" }}>·</span>
-          <span className="mono" style={{ color: "var(--gold)", fontWeight: 700, fontSize: 13 }}>
-            76% ROI
-          </span>
+          <span className="mono" style={{ color: "var(--gold)", fontWeight: 700, fontSize: 13 }}>76% ROI</span>
         </div>
 
-        {/* Confidence chip */}
         <Chip kind="gold" className="self-start" style={{ fontSize: 10 }}>
           78% CONFIDENCE TODAY
         </Chip>
 
-        {/* USA vs TUR pill */}
         <div
           style={{
             display: "inline-flex",
@@ -139,7 +191,7 @@ export function PaulHeroCard({ paulSize = 460 }: PaulHeroCardProps) {
             gap: 8,
             padding: "6px 12px",
             borderRadius: 999,
-            background: "rgba(10,6,21,0.65)",
+            background: "rgba(10,6,21,0.68)",
             border: "1px solid var(--hair-strong)",
             alignSelf: "flex-start",
             backdropFilter: "blur(6px)",
@@ -153,13 +205,13 @@ export function PaulHeroCard({ paulSize = 460 }: PaulHeroCardProps) {
         </div>
       </div>
 
-      {/* Paul character — BIG, right-side, overflowing */}
+      {/* Right: animated Paul SVG rig */}
       <motion.div
         style={{
           position: "absolute",
-          right: -30,
-          bottom: -20,
-          top: "12%",
+          right: -24,
+          bottom: -30,
+          top: "6%",
           display: "flex",
           alignItems: "flex-end",
           justifyContent: "flex-end",
@@ -170,21 +222,10 @@ export function PaulHeroCard({ paulSize = 460 }: PaulHeroCardProps) {
         animate={reduce ? {} : { y: [0, -8, 0] }}
         transition={reduce ? {} : { duration: 4, ease: "easeInOut", repeat: Infinity }}
       >
-        <Image
-          src="/assets/chibi_oracle.png"
-          alt="Paul the Oracle"
-          width={paulSize}
-          height={paulSize}
-          priority
-          style={{
-            objectFit: "contain",
-            filter:
-              "drop-shadow(0 24px 48px rgba(0,0,0,0.7)) drop-shadow(0 0 40px rgba(139,71,214,0.45))",
-          }}
-        />
+        <PaulStudio size={paulSize} mood={mood} lookAt={lookAt} />
       </motion.div>
 
-      {/* Bottom stat pill row */}
+      {/* Bottom stat pills */}
       <div
         style={{
           position: "absolute",
@@ -204,15 +245,13 @@ export function PaulHeroCard({ paulSize = 460 }: PaulHeroCardProps) {
           <div
             key={label}
             className="flex-1 stat-tile"
-            style={
-              {
-                "--tile-color": color,
-                padding: "10px 12px",
-                background: "rgba(10,6,21,0.78)",
-                borderRadius: 12,
-                backdropFilter: "blur(12px)",
-              } as React.CSSProperties
-            }
+            style={{
+              "--tile-color": color,
+              padding: "10px 12px",
+              background: "rgba(10,6,21,0.82)",
+              borderRadius: 12,
+              backdropFilter: "blur(12px)",
+            } as React.CSSProperties}
           >
             <div className="label" style={{ fontSize: 9, color }}>
               {label}

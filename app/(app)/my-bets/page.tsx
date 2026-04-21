@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { ChibiImage } from "@/components/shared/ChibiImage";
 import { AccentCard } from "@/components/shared/AccentCard";
 import { Chip } from "@/components/shared/Chip";
 import { FlagRect } from "@/components/shared/FlagRect";
@@ -28,16 +28,7 @@ export default function MyBetsPage() {
       {/* Hero */}
       <AccentCard accent="var(--fifa-teal)" className="p-6 overflow-visible">
         <div className="grid gap-6 md:grid-cols-[auto_1fr]">
-          <Image
-            src="/assets/chibi_cheerful.png"
-            alt=""
-            width={160}
-            height={160}
-            style={{
-              filter:
-                "drop-shadow(0 16px 36px rgba(0,0,0,0.6)) drop-shadow(0 0 28px rgba(0,185,178,0.4))",
-            }}
-          />
+          <ChibiImage src="/assets/chibi_cheerful.png" size={170} glow="rgba(0,185,178,0.5)" />
           <div>
             <Chip>Lifetime · 23 bets · 61% win rate</Chip>
             <h1 className="display text-4xl md:text-5xl mt-2 leading-none">

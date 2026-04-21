@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { ChibiImage } from "@/components/shared/ChibiImage";
 import { AccentCard } from "@/components/shared/AccentCard";
 import { Chip } from "@/components/shared/Chip";
 import { cn } from "@/lib/utils/cn";
@@ -33,16 +34,7 @@ export default function SettingsPage() {
       {/* Hero */}
       <AccentCard accent="var(--fifa-blue)" className="p-6 overflow-visible">
         <div className="grid items-center gap-6 md:grid-cols-[auto_1fr]">
-          <Image
-            src={`/assets/${avatar}.png`}
-            alt="Your avatar"
-            width={160}
-            height={160}
-            style={{
-              filter:
-                "drop-shadow(0 16px 36px rgba(0,0,0,0.6)) drop-shadow(0 0 28px rgba(46,111,230,0.4))",
-            }}
-          />
+          <ChibiImage src={`/assets/${avatar}.png`} size={170} glow="rgba(46,111,230,0.55)" />
           <div>
             <Chip>Profile</Chip>
             <h1 className="display text-4xl md:text-5xl mt-2 leading-none">

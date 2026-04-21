@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { ChibiImage } from "@/components/shared/ChibiImage";
 import { AccentCard } from "@/components/shared/AccentCard";
 import { Chip } from "@/components/shared/Chip";
 import { FlagRect } from "@/components/shared/FlagRect";
@@ -15,16 +15,7 @@ export default function LeaderboardPage() {
       {/* Hero */}
       <AccentCard accent="var(--gold)" className="p-6 overflow-visible">
         <div className="grid items-center gap-6 md:grid-cols-[auto_1fr_auto]">
-          <Image
-            src="/assets/chibi_tarot.png"
-            alt=""
-            width={180}
-            height={180}
-            style={{
-              filter:
-                "drop-shadow(0 16px 36px rgba(0,0,0,0.6)) drop-shadow(0 0 28px rgba(245,208,32,0.4))",
-            }}
-          />
+          <ChibiImage src="/assets/chibi_tarot.png" size={180} glow="rgba(245,208,32,0.5)" />
           <div>
             <Chip kind="gold">Weekly Merkle drop · Sun 23:00 UTC</Chip>
             <h1 className="display text-4xl md:text-5xl mt-2 leading-none">

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { ChibiImage } from "@/components/shared/ChibiImage";
 import { AccentCard } from "@/components/shared/AccentCard";
 import { Chip } from "@/components/shared/Chip";
 import { ConfidenceBar } from "@/components/shared/ConfidenceBar";
@@ -43,16 +43,12 @@ export default function OraclePage() {
       {/* Hero */}
       <AccentCard accent="var(--fifa-magenta)" className="p-6 overflow-visible relative">
         <div className="grid items-center gap-6 md:grid-cols-[auto_1fr]">
-          <Image
+          <ChibiImage
             src="/assets/chibi_oracle.png"
             alt="Paul"
-            width={220}
-            height={220}
+            size={220}
+            glow="rgba(230,55,168,0.55)"
             priority
-            style={{
-              filter:
-                "drop-shadow(0 24px 48px rgba(0,0,0,0.6)) drop-shadow(0 0 42px rgba(230,55,168,0.45))",
-            }}
           />
           <div>
             <Chip kind="gold">Paul · The Oracle · live</Chip>
